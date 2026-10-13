@@ -1,32 +1,40 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { GameMode } from "../../api/client";
-import { searchItems, type Item } from "../../api/items";
+import { loadItems, searchItems, type Item } from "../../api/items";
 
-type State =
+type Db =
+  | { status: "loading" }
+  | { status: "error"; error: string }
+  | { status: "ready"; items: Item[] };
+
+export type SearchState =
   | { status: "idle" }
   | { status: "loading" }
   | { status: "error"; error: string }
   | { status: "done"; items: Item[] };
 
-export function useItemSearch(query: string, gameMode: GameMode): State {
-  const [state, setState] = useState<State>({ status: "idle" });
+export function useItemSearch(query: string, gameMode: GameMode, retryKey = 0): SearchState {
+  const [db, setDb] = useState<Db>({ status: "loading" });
 
   useEffect(() => {
-    const q = query.trim();
-    if (q.length < 2) {
-      setState({ status: "idle" });
-      return;
-    }
-    const controller = new AbortController();
-    setState({ status: "loading" });
-    searchItems(q, gameMode, controller.signal)
-      .then((items) => setState({ status: "done", items }))
+    let cancelled = false;
+    setDb({ status: "loading" });
+    loadItems(gameMode)
+      .then((items) => !cancelled && setDb({ status: "ready", items }))
       .catch((err: unknown) => {
-        if (controller.signal.aborted) return;
-        setState({ status: "error", error: err instanceof Error ? err.message : String(err) });
+        if (cancelled) return;
+        setDb({ status: "error", error: err instanceof Error ? err.message : String(err) });
       });
-    return () => controller.abort();
-  }, [query, gameMode]);
+    return () => {
+      cancelled = true;
+    };
+  }, [gameMode, retryKey]);
 
-  return state;
+  return useMemo((): SearchState => {
+    if (db.status === "error") return db;
+    const q = query.trim();
+    if (q.length < 2) return { status: "idle" };
+    if (db.status === "loading") return { status: "loading" };
+    return { status: "done", items: searchItems(db.items, q) };
+  }, [db, query]);
 }

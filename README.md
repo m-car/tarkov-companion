@@ -1,6 +1,6 @@
 # Tarkov Companion
 
-A web companion app for Escape from Tarkov, powered by the free [tarkov.dev](https://tarkov.dev) API.
+A web companion app for Escape from Tarkov, powered by the free [tarkov.dev](https://tarkov.dev) JSON API (`json.tarkov.dev`). Its GraphQL API has been down since mid-2026, so the app downloads item data once per game mode and searches it in the browser.
 
 ## Features
 

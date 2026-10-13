@@ -8,9 +8,10 @@ import { useItemSearch } from "./useItemSearch";
 
 export function PriceSearch({ gameMode }: { gameMode: GameMode }) {
   const [query, setQuery] = useState("");
+  const [retryKey, setRetryKey] = useState(0);
   const [sort, setSort] = useLocalStorage<SortKey>("tc.sort", "perSlot");
-  const debounced = useDebouncedValue(query, 350);
-  const result = useItemSearch(debounced, gameMode);
+  const debounced = useDebouncedValue(query, 150);
+  const result = useItemSearch(debounced, gameMode, retryKey);
 
   const items = useMemo(
     () => (result.status === "done" ? sortItems(result.items, sort) : []),
@@ -41,9 +42,14 @@ export function PriceSearch({ gameMode }: { gameMode: GameMode }) {
       {result.status === "idle" && (
         <p className="hint">Type at least 2 characters to search.</p>
       )}
-      {result.status === "loading" && <p className="hint">Searching…</p>}
+      {result.status === "loading" && <p className="hint">Loading item prices…</p>}
       {result.status === "error" && (
-        <p className="error">Couldn't load prices: {result.error}</p>
+        <div>
+          <p className="error">Couldn't load prices: {result.error}</p>
+          <button className="retry" onClick={() => setRetryKey((k) => k + 1)}>
+            Try again
+          </button>
+        </div>
       )}
       {result.status === "done" && items.length === 0 && (
         <p className="hint">No items match "{debounced}".</p>
