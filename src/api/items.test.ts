@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { buildItems, searchItems, type RawItem, type RawTrader } from "./items";
+import { translator } from "./client";
+import { buildItems, searchItems, type RawItem } from "./items";
+import type { Trader } from "./traders";
 
 const rawItems: Record<string, RawItem> = {
   ledx: {
@@ -27,13 +29,12 @@ const itemLocale = {
   "ledx ShortName": "LEDX",
   "tag Name": "Dogtag",
 };
-const traders: Record<string, RawTrader> = {
-  t1: { id: "t1", name: "t1 Nickname", normalizedName: "therapist" },
+const traders: Record<string, Trader> = {
+  t1: { id: "t1", name: "Therapist", normalizedName: "therapist" },
 };
-const traderLocale = { "t1 Nickname": "Therapist" };
 
 describe("buildItems", () => {
-  const items = buildItems(rawItems, itemLocale, traders, traderLocale);
+  const items = buildItems(rawItems, translator(itemLocale), traders);
   const ledx = items.find((i) => i.id === "ledx")!;
   const tag = items.find((i) => i.id === "tag")!;
 
@@ -62,7 +63,7 @@ describe("buildItems", () => {
 });
 
 describe("searchItems", () => {
-  const items = buildItems(rawItems, itemLocale, traders, traderLocale);
+  const items = buildItems(rawItems, translator(itemLocale), traders);
 
   it("matches name or short name, case-insensitively", () => {
     expect(searchItems(items, "ledx").map((i) => i.id)).toEqual(["ledx"]);

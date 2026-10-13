@@ -20,7 +20,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, State> {
     return (
       <section className="panel">
         <p className="error">Something went wrong: {this.state.error.message}</p>
-        <button className="retry" onClick={() => this.setState({ error: null })}>
+        <button className="btn" onClick={() => this.setState({ error: null })}>
           Try again
         </button>
       </section>

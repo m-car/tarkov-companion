@@ -1,4 +1,5 @@
-import { fetchJson, type GameMode, type Locale } from "./client";
+import { cached, fetchLocalized, type GameMode, type Translate } from "./client";
+import { loadTraders, type Trader } from "./traders";
 
 export interface Vendor {
   name: string;
@@ -58,27 +59,19 @@ export interface RawItem {
   buyFromTrader?: TraderOffer[] | null;
 }
 
-export interface RawTrader {
-  id: string;
-  name: string;
-  normalizedName: string;
-}
 
 const FLEA: Vendor = { name: "Flea Market", normalizedName: "flea-market" };
-
-const t = (locale: Locale, key: string) => locale[key] ?? key;
 
 /** Turn raw JSON API data into the flat items the UI works with. */
 export function buildItems(
   rawItems: Record<string, RawItem>,
-  itemLocale: Locale,
-  traders: Record<string, RawTrader>,
-  traderLocale: Locale,
+  t: Translate,
+  traders: Record<string, Trader>,
 ): Item[] {
   const vendor = (traderId: string): Vendor => {
     const trader = traders[traderId];
     return trader
-      ? { name: t(traderLocale, trader.name), normalizedName: trader.normalizedName }
+      ? { name: trader.name, normalizedName: trader.normalizedName }
       : { name: traderId, normalizedName: traderId };
   };
   const offers = (list: TraderOffer[] | null | undefined): ItemPrice[] =>
@@ -93,8 +86,8 @@ export function buildItems(
 
   return Object.values(rawItems).map((raw) => ({
     id: raw.id,
-    name: t(itemLocale, raw.name),
-    shortName: t(itemLocale, raw.shortName),
+    name: t(raw.name),
+    shortName: t(raw.shortName),
     iconLink: raw.iconLink ?? null,
     wikiLink: raw.wikiLink ?? null,
     link: raw.link ?? `https://tarkov.dev/item/${raw.normalizedName}`,
@@ -111,25 +104,15 @@ export function buildItems(
   }));
 }
 
-const cache = new Map<GameMode, Promise<Item[]>>();
-
 /** Loads every item for a game mode once, then serves it from memory. */
 export function loadItems(gameMode: GameMode): Promise<Item[]> {
-  let pending = cache.get(gameMode);
-  if (!pending) {
-    pending = Promise.all([
-      fetchJson<{ items: Record<string, RawItem> }>(`${gameMode}/items`),
-      fetchJson<Locale>(`${gameMode}/items_en`),
-      fetchJson<Record<string, RawTrader>>(`${gameMode}/traders`),
-      fetchJson<Locale>(`${gameMode}/traders_en`),
-    ]).then(([itemData, itemLocale, traders, traderLocale]) =>
-      buildItems(itemData.items, itemLocale, traders, traderLocale),
-    );
-    // Don't cache failures, so the next search retries.
-    pending.catch(() => cache.delete(gameMode));
-    cache.set(gameMode, pending);
-  }
-  return pending;
+  return cached(`${gameMode}/items`, async () => {
+    const [{ data, t }, traders] = await Promise.all([
+      fetchLocalized<{ items: Record<string, RawItem> }>(`${gameMode}/items`),
+      loadTraders(gameMode),
+    ]);
+    return buildItems(data.items, t, traders);
+  });
 }
 
 /** Items whose name or short name contains every word of the query. */

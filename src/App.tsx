@@ -1,60 +1,109 @@
-import type { GameMode } from "./api/client";
+import { useEffect, useState } from "react";
 import { ErrorBoundary } from "./ErrorBoundary";
-import { PriceSearch } from "./features/prices/PriceSearch";
+import { HideoutTab } from "./features/hideout/HideoutTab";
+import { LootTab } from "./features/loot/LootTab";
+import { QuestsTab } from "./features/quests/QuestsTab";
+import { SettingsPanel } from "./features/settings/SettingsPanel";
 import { useLocalStorage } from "./hooks/useLocalStorage";
+import { AppStateProvider, useAppState } from "./state/AppState";
 
-type Tab = "prices" | "quests" | "hideout" | "ammo";
+type Tab = "loot" | "quests" | "hideout";
 
-const TABS: { id: Tab; label: string; ready: boolean }[] = [
-  { id: "prices", label: "Prices", ready: true },
-  { id: "quests", label: "Quests", ready: false },
-  { id: "hideout", label: "Hideout", ready: false },
-  { id: "ammo", label: "Ammo", ready: false },
+const TABS: { id: Tab; label: string }[] = [
+  { id: "loot", label: "Loot" },
+  { id: "quests", label: "Quests" },
+  { id: "hideout", label: "Hideout" },
 ];
 
 export function App() {
-  const [tab, setTab] = useLocalStorage<Tab>("tc.tab", "prices");
-  const [gameMode, setGameMode] = useLocalStorage<GameMode>("tc.gameMode", "regular");
+  return (
+    <AppStateProvider>
+      <Shell />
+    </AppStateProvider>
+  );
+}
+
+function Shell() {
+  const [storedTab, setTab] = useLocalStorage<Tab>("tc.tab", "loot");
+  const tab = TABS.some((t) => t.id === storedTab) ? storedTab : "loot";
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const { gameMode, setGameMode } = useAppState();
+
+  // Keyboard shortcuts for alt-tab use: / focuses search, 1-3 switch tabs.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const el = e.target as HTMLElement;
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (el.closest("input, textarea, select")) return;
+      const index = Number(e.key) - 1;
+      if (TABS[index]) {
+        setTab(TABS[index].id);
+      } else if (e.key === "/") {
+        e.preventDefault();
+        const focusSearch = () =>
+          document.querySelector<HTMLInputElement>("input[data-search]")?.focus();
+        // Focus right away when the search box is on screen so no keystrokes are lost.
+        if (document.querySelector("input[data-search]")) {
+          focusSearch();
+        } else {
+          setTab("loot");
+          requestAnimationFrame(focusSearch);
+        }
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [setTab]);
 
   return (
     <div className="app">
       <header className="topbar">
         <h1>Tarkov Companion</h1>
-        <div className="mode-toggle" role="group" aria-label="Game mode">
-          {(["regular", "pve"] as const).map((m) => (
-            <button
-              key={m}
-              className={gameMode === m ? "active" : ""}
-              onClick={() => setGameMode(m)}
-            >
-              {m === "regular" ? "PvP" : "PvE"}
-            </button>
-          ))}
+        <div className="topbar-actions">
+          <div className="segmented" role="group" aria-label="Game mode">
+            {(["regular", "pve"] as const).map((m) => (
+              <button
+                key={m}
+                className={gameMode === m ? "active" : ""}
+                aria-pressed={gameMode === m}
+                onClick={() => setGameMode(m)}
+              >
+                {m === "regular" ? "PvP" : "PvE"}
+              </button>
+            ))}
+          </div>
+          <button
+            className={`icon-btn ${settingsOpen ? "active" : ""}`}
+            onClick={() => setSettingsOpen((o) => !o)}
+            aria-label="Settings"
+            aria-expanded={settingsOpen}
+            title="Settings"
+          >
+            ⚙
+          </button>
         </div>
       </header>
 
+      {settingsOpen && <SettingsPanel onClose={() => setSettingsOpen(false)} />}
+
       <nav className="tabs">
-        {TABS.map((t) => (
+        {TABS.map((t, i) => (
           <button
             key={t.id}
             className={tab === t.id ? "active" : ""}
             onClick={() => setTab(t.id)}
+            title={`Shortcut: ${i + 1}`}
           >
             {t.label}
-            {!t.ready && <span className="soon">soon</span>}
           </button>
         ))}
       </nav>
 
       <main>
         <ErrorBoundary key={tab}>
-          {tab === "prices" ? (
-            <PriceSearch gameMode={gameMode} />
-          ) : (
-            <section className="panel">
-              <p className="hint">This tab is coming next.</p>
-            </section>
-          )}
+          {tab === "loot" && <LootTab />}
+          {tab === "quests" && <QuestsTab />}
+          {tab === "hideout" && <HideoutTab />}
         </ErrorBoundary>
       </main>
 

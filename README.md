@@ -4,8 +4,14 @@ A web companion app for Escape from Tarkov, powered by the free [tarkov.dev](htt
 
 ## Features
 
-- **Prices**: search any item and see its flea market price, the best trader to sell to, value per slot, and the cheapest place to buy it. Switch between PvP and PvE prices.
-- Quests, Hideout and Ammo tabs are coming next.
+Built for quick checks during a raid, on a phone, a second monitor, or alt-tabbed.
+
+- **Loot**: search any item and get a verdict first (**QUEST / HIDEOUT / KEEP / SELL**), then flea and trader prices, value per slot and cheapest buy. Star items to pin them to a watchlist you can check without typing.
+- **Quests**: mark quests done (ticking a quest also marks its required earlier quests). Filter by available, locked or done, or by Kappa. Pick a map to see only the objectives you can do there. A list shows every item your open quests still need.
+- **Hideout**: set each station's level and see what the next upgrade needs, plus a full shopping list.
+- **Settings** (⚙): your level, faction, and the value per slot worth keeping.
+- **Shortcuts**: `/` search loot, `1`–`3` switch tabs, `Esc` clear search.
+- Progress is saved in your browser, separately for PvP and PvE.
 
 ## Development
 

@@ -6,6 +6,7 @@ export type GameMode = "regular" | "pve";
 
 /** Translation tables map keys like "<id> Name" to display text. */
 export type Locale = Record<string, string>;
+export type Translate = (key: string) => string;
 
 export async function fetchJson<T>(path: string, signal?: AbortSignal): Promise<T> {
   let res: Response;
@@ -25,4 +26,31 @@ export async function fetchJson<T>(path: string, signal?: AbortSignal): Promise<
     throw new Error("tarkov.dev returned no data");
   }
   return json.data;
+}
+
+export const translator =
+  (locale: Locale): Translate =>
+  (key) =>
+    locale[key] ?? key;
+
+/** Fetches an endpoint together with its English translation table. */
+export async function fetchLocalized<T>(path: string): Promise<{ data: T; t: Translate }> {
+  const [data, locale] = await Promise.all([
+    fetchJson<T>(path),
+    fetchJson<Locale>(`${path}_en`),
+  ]);
+  return { data, t: translator(locale) };
+}
+
+const cache = new Map<string, Promise<unknown>>();
+
+/** Runs a loader once per key and shares the result; failures are retried next time. */
+export function cached<T>(key: string, load: () => Promise<T>): Promise<T> {
+  let pending = cache.get(key) as Promise<T> | undefined;
+  if (!pending) {
+    pending = load();
+    pending.catch(() => cache.delete(key));
+    cache.set(key, pending);
+  }
+  return pending;
 }
