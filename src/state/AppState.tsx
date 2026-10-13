@@ -8,6 +8,7 @@ interface Progress {
   completedTasks: string[];
   hideoutLevels: HideoutLevels;
   playerLevel: number;
+  ownedKeys?: string[];
 }
 
 interface Settings {
@@ -29,6 +30,9 @@ interface AppState {
 
   starred: ReadonlySet<string>;
   toggleStar: (itemId: string) => void;
+
+  ownedKeys: ReadonlySet<string>;
+  toggleOwnedKey: (itemId: string) => void;
 
   settings: Settings;
   updateSettings: (patch: Partial<Settings>) => void;
@@ -76,6 +80,15 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       hideoutLevels: progress.hideoutLevels,
       setHideoutLevel: (stationId, level) =>
         setProgress((p) => ({ ...p, hideoutLevels: { ...p.hideoutLevels, [stationId]: level } })),
+      ownedKeys: new Set(progress.ownedKeys ?? []),
+      toggleOwnedKey: (itemId) =>
+        setProgress((p) => {
+          const keys = p.ownedKeys ?? [];
+          return {
+            ...p,
+            ownedKeys: keys.includes(itemId) ? keys.filter((k) => k !== itemId) : [...keys, itemId],
+          };
+        }),
       starred: new Set(starredList),
       toggleStar: (itemId) =>
         setStarred((s) => (s.includes(itemId) ? s.filter((i) => i !== itemId) : [...s, itemId])),

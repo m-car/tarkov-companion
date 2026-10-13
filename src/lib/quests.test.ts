@@ -11,6 +11,7 @@ const obj = (o: Partial<Objective>): Objective => ({
   maps: [],
   items: [],
   foundInRaid: false,
+  markerItem: null,
   ...o,
 });
 
@@ -27,6 +28,7 @@ const task = (t: Partial<Task> & { id: string }): Task => ({
   wikiLink: null,
   requirements: [],
   objectives: [],
+  neededKeys: [],
   ...t,
 });
 

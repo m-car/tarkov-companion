@@ -12,6 +12,8 @@ export interface Objective {
   /** Acceptable items for item objectives (any one of them). */
   items: string[];
   foundInRaid: boolean;
+  /** Item you must bring to place a marker (e.g. MS2000). */
+  markerItem: string | null;
 }
 
 export interface TaskRequirement {
@@ -34,6 +36,8 @@ export interface Task {
   wikiLink: string | null;
   requirements: TaskRequirement[];
   objectives: Objective[];
+  /** Keys the quest needs, per map. */
+  neededKeys: { mapId: string; keys: string[] }[];
 }
 
 // json.tarkov.dev payload shapes (only the fields we use).
@@ -46,6 +50,7 @@ interface RawObjective {
   maps?: string[] | null;
   items?: string[] | null;
   foundInRaid?: boolean;
+  markerItem?: string | null;
 }
 
 export interface RawTask {
@@ -61,6 +66,7 @@ export interface RawTask {
   wikiLink?: string | null;
   taskRequirements?: { task: string; status?: string[] }[];
   objectives?: RawObjective[];
+  neededKeys?: { map: string; keys?: string[] }[];
 }
 
 export function buildTasks(
@@ -93,7 +99,9 @@ export function buildTasks(
       maps: o.maps ?? [],
       items: o.items ?? [],
       foundInRaid: Boolean(o.foundInRaid),
+      markerItem: o.markerItem ?? null,
     })),
+    neededKeys: (raw.neededKeys ?? []).map((k) => ({ mapId: k.map, keys: k.keys ?? [] })),
   }));
 }
 
