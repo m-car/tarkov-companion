@@ -7,13 +7,14 @@ import {
   appliesToFaction,
   objectivesAnywhere,
   objectivesOnMap,
-  prerequisiteChain,
   type QuestStatus,
 } from "../../lib/quests";
 import { useAppState } from "../../state/AppState";
 import { useGameData, useNeeds } from "../../state/useGameData";
 import { NeededItems } from "./NeededItems";
 import { QuestRow } from "./QuestRow";
+import { RecentlyFinished } from "./RecentlyFinished";
+import { useQuestToggle } from "./useQuestToggle";
 
 type Filter = "available" | "locked" | "done" | "all";
 const ALL_MAPS = "all";
@@ -21,7 +22,7 @@ const ALL_MAPS = "all";
 export function QuestsTab() {
   const { tasks, maps, itemsById, retry } = useGameData();
   const { statuses, verdictContext } = useNeeds();
-  const { completed, toggleTask, setTasksCompleted, settings } = useAppState();
+  const { settings } = useAppState();
   const [mapId, setMapId] = useLocalStorage("tc.questMap", ALL_MAPS);
   const [filter, setFilter] = useLocalStorage<Filter>("tc.questFilter", "available");
   const [kappaOnly, setKappaOnly] = useLocalStorage("tc.kappaOnly", false);
@@ -47,10 +48,7 @@ export function QuestsTab() {
     return mapList.filter((m) => used.has(m.id));
   }, [taskList, mapList]);
 
-  const toggle = (task: Task) => {
-    if (completed.has(task.id)) toggleTask(task.id);
-    else setTasksCompleted([task.id, ...prerequisiteChain(task, taskList)], true);
-  };
+  const toggle = useQuestToggle(taskList);
 
   const status = (t: Task): QuestStatus => statuses.get(t.id) ?? "locked";
   const q = query.trim().toLowerCase();
@@ -79,6 +77,8 @@ export function QuestsTab() {
       </div>
 
       {loading}
+
+      <RecentlyFinished tasks={taskList} />
 
       {tasks.status === "ready" &&
         (mapId === ALL_MAPS ? (

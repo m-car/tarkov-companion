@@ -484,3 +484,21 @@ details .extract-req { color: var(--muted); }
   .plan-stats { margin-left: 44px; width: 100%; }
   .plan-body { padding-left: 12px; }
 }
+
+/* Finished recently */
+.recent {
+  margin: 4px 0 12px;
+  padding: 6px 12px 10px;
+  background: var(--surface);
+  border: 1px solid var(--keep);
+  border-radius: 8px;
+}
+.recent-head { display: flex; align-items: center; justify-content: space-between; }
+.recent-head .section-title { margin: 6px 0; color: var(--keep); }
+.recent ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.recent li { display: flex; align-items: center; gap: 10px; }
+.recent-check { color: var(--keep); font-weight: 700; }
+.recent-name { flex: 1; min-width: 0; }
+.btn.undo { min-height: 36px; }
+.link-btn { background: none; border: 0; color: var(--muted); padding: 6px; font-size: 0.85rem; }
+.link-btn:hover { color: var(--text); }

@@ -8,7 +8,7 @@ import { Segmented } from "../../components/Segmented";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { CURRENCY_CODES } from "../../lib/hideout";
 import { formatPrice } from "../../lib/prices";
-import { appliesToFaction, objectivesAnywhere, prerequisiteChain } from "../../lib/quests";
+import { appliesToFaction, objectivesAnywhere } from "../../lib/quests";
 import {
   extractsFor,
   keysForMap,
@@ -21,6 +21,8 @@ import {
 import { useAppState } from "../../state/AppState";
 import { useGameData, useNeeds } from "../../state/useGameData";
 import { QuestRow } from "../quests/QuestRow";
+import { RecentlyFinished } from "../quests/RecentlyFinished";
+import { useQuestToggle } from "../quests/useQuestToggle";
 
 const PLAN = "plan";
 
@@ -155,15 +157,12 @@ function MapDetail({
   mapList: GameMap[];
 }) {
   const { map } = plan;
-  const { completed, toggleTask, setTasksCompleted, ownedKeys, toggleOwnedKey } = useAppState();
+  const { ownedKeys, toggleOwnedKey } = useAppState();
   const { statuses } = useNeeds();
   const [side, setSide] = useLocalStorage<Side>("tc.side", "pmc");
   const extracts = extractsFor(map, side);
 
-  const toggle = (task: Task) => {
-    if (completed.has(task.id)) toggleTask(task.id);
-    else setTasksCompleted([task.id, ...prerequisiteChain(task, tasks)], true);
-  };
+  const toggle = useQuestToggle(tasks);
 
   const available = tasks.filter((t) => statuses.get(t.id) === "available");
   const anywhere = available
@@ -251,6 +250,8 @@ function MapDetail({
           </ul>
         </details>
       )}
+
+      <RecentlyFinished tasks={tasks} />
 
       <h2 className="section-title">
         Your objectives here <span className="muted">({plan.quests.length})</span>

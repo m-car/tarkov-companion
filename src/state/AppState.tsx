@@ -2,6 +2,13 @@ import { createContext, useContext, useMemo, type ReactNode } from "react";
 import type { GameMode } from "../api/client";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import type { HideoutLevels } from "../lib/hideout";
+import {
+  completeQuest,
+  uncompleteQuest,
+  undoCompletion,
+  type QuestLog,
+  type RecentCompletion,
+} from "../lib/progress";
 import type { Faction } from "../lib/quests";
 
 interface Progress {
@@ -9,6 +16,7 @@ interface Progress {
   hideoutLevels: HideoutLevels;
   playerLevel: number;
   ownedKeys?: string[];
+  recentlyCompleted?: RecentCompletion[];
 }
 
 interface Settings {
@@ -21,8 +29,12 @@ interface AppState {
   setGameMode: (mode: GameMode) => void;
 
   completed: ReadonlySet<string>;
-  toggleTask: (id: string) => void;
-  setTasksCompleted: (ids: string[], done: boolean) => void;
+  /** Marks a quest done, plus prerequisites; recorded in recentlyCompleted for undo. */
+  completeTask: (id: string, prerequisites: string[]) => void;
+  uncompleteTask: (id: string) => void;
+  undoCompletion: (id: string) => void;
+  recentlyCompleted: RecentCompletion[];
+  clearRecent: () => void;
   playerLevel: number;
   setPlayerLevel: (level: number) => void;
   hideoutLevels: HideoutLevels;
@@ -55,26 +67,23 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo((): AppState => {
     const completed = new Set(progress.completedTasks);
+    const updateLog = (change: (log: QuestLog) => QuestLog) =>
+      setProgress((p) => ({
+        ...p,
+        ...change({
+          completedTasks: p.completedTasks,
+          recentlyCompleted: p.recentlyCompleted ?? [],
+        }),
+      }));
     return {
       gameMode,
       setGameMode,
       completed,
-      toggleTask: (id) =>
-        setProgress((p) => ({
-          ...p,
-          completedTasks: p.completedTasks.includes(id)
-            ? p.completedTasks.filter((t) => t !== id)
-            : [...p.completedTasks, id],
-        })),
-      setTasksCompleted: (ids, done) =>
-        setProgress((p) => {
-          const next = new Set(p.completedTasks);
-          for (const id of ids) {
-            if (done) next.add(id);
-            else next.delete(id);
-          }
-          return { ...p, completedTasks: [...next] };
-        }),
+      completeTask: (id, prerequisites) => updateLog((log) => completeQuest(log, id, prerequisites)),
+      uncompleteTask: (id) => updateLog((log) => uncompleteQuest(log, id)),
+      undoCompletion: (id) => updateLog((log) => undoCompletion(log, id)),
+      recentlyCompleted: progress.recentlyCompleted ?? [],
+      clearRecent: () => setProgress((p) => ({ ...p, recentlyCompleted: [] })),
       playerLevel: progress.playerLevel,
       setPlayerLevel: (level) => setProgress((p) => ({ ...p, playerLevel: level })),
       hideoutLevels: progress.hideoutLevels,
