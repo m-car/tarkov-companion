@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Item, ItemPrice } from "../api/items";
+import { normalizeItem, type Item, type ItemPrice } from "../api/items";
 import {
   bestSellValue,
   bestTraderSell,
@@ -75,5 +75,15 @@ describe("prices", () => {
   it("formats currencies", () => {
     expect(formatPrice(1234567)).toBe("1,234,567 ₽");
     expect(formatPrice(250, "USD")).toBe("$250");
+  });
+});
+
+describe("normalizeItem", () => {
+  it("turns null price lists into empty arrays", () => {
+    const raw = { ...item(), sellFor: null, buyFor: null, width: 0, height: 0 };
+    const n = normalizeItem(raw);
+    expect(n.sellFor).toEqual([]);
+    expect(n.buyFor).toEqual([]);
+    expect(valuePerSlot(n)).toBe(0);
   });
 });

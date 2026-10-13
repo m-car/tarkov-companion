@@ -1,4 +1,5 @@
 import type { GameMode } from "./api/client";
+import { ErrorBoundary } from "./ErrorBoundary";
 import { PriceSearch } from "./features/prices/PriceSearch";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 
@@ -46,13 +47,15 @@ export function App() {
       </nav>
 
       <main>
-        {tab === "prices" ? (
-          <PriceSearch gameMode={gameMode} />
-        ) : (
-          <section className="panel">
-            <p className="hint">This tab is coming next.</p>
-          </section>
-        )}
+        <ErrorBoundary key={tab}>
+          {tab === "prices" ? (
+            <PriceSearch gameMode={gameMode} />
+          ) : (
+            <section className="panel">
+              <p className="hint">This tab is coming next.</p>
+            </section>
+          )}
+        </ErrorBoundary>
       </main>
 
       <footer className="footer">

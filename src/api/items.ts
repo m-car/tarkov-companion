@@ -52,15 +52,31 @@ const SEARCH_ITEMS = /* GraphQL */ `
   }
 `;
 
+// The API returns null for some list fields; normalize so the UI can rely on arrays.
+type RawItem = Omit<Item, "sellFor" | "buyFor"> & {
+  sellFor: ItemPrice[] | null;
+  buyFor: ItemPrice[] | null;
+};
+
+export function normalizeItem(raw: RawItem): Item {
+  return {
+    ...raw,
+    width: raw.width || 1,
+    height: raw.height || 1,
+    sellFor: (raw.sellFor ?? []).filter((p) => p?.vendor),
+    buyFor: (raw.buyFor ?? []).filter((p) => p?.vendor),
+  };
+}
+
 export async function searchItems(
   name: string,
   gameMode: GameMode,
   signal?: AbortSignal,
 ): Promise<Item[]> {
-  const data = await gql<{ items: Item[] }>(
+  const data = await gql<{ items: (RawItem | null)[] | null }>(
     SEARCH_ITEMS,
     { name, gameMode, limit: 30 },
     signal,
   );
-  return data.items;
+  return (data.items ?? []).filter((i): i is RawItem => i !== null).map(normalizeItem);
 }
