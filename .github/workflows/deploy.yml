@@ -24,6 +24,9 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Refresh container odds and map configs; keep the committed copies if a source is down.
+      - run: npm run update-data
+        continue-on-error: true
       - run: npm test
       - run: npm run build
         env:

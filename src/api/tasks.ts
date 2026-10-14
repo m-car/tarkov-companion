@@ -1,4 +1,5 @@
 import { cached, fetchLocalized, type GameMode, type Translate } from "./client";
+import type { Position } from "./maps";
 import { loadTraders, type Trader } from "./traders";
 
 export interface Objective {
@@ -14,6 +15,8 @@ export interface Objective {
   foundInRaid: boolean;
   /** Item you must bring to place a marker (e.g. MS2000). */
   markerItem: string | null;
+  /** Exact places on the map for the objective, when known. */
+  zones: { mapId: string; position: Position }[];
 }
 
 export interface TaskRequirement {
@@ -51,6 +54,7 @@ interface RawObjective {
   items?: string[] | null;
   foundInRaid?: boolean;
   markerItem?: string | null;
+  zones?: { map: string; position?: Position }[];
 }
 
 export interface RawTask {
@@ -100,6 +104,9 @@ export function buildTasks(
       items: o.items ?? [],
       foundInRaid: Boolean(o.foundInRaid),
       markerItem: o.markerItem ?? null,
+      zones: (o.zones ?? [])
+        .filter((z) => z.position)
+        .map((z) => ({ mapId: z.map, position: z.position! })),
     })),
     neededKeys: (raw.neededKeys ?? []).map((k) => ({ mapId: k.map, keys: k.keys ?? [] })),
   }));

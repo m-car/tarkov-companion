@@ -15,6 +15,7 @@ const obj = (o: Partial<Objective>): Objective => ({
   items: [],
   foundInRaid: false,
   markerItem: null,
+  zones: [],
   ...o,
 });
 
@@ -44,6 +45,9 @@ const map = (m: Partial<GameMap> & { id: string }): GameMap => ({
   transits: [],
   locks: [],
   bosses: [],
+  nameId: null,
+  lootLoose: [],
+  lootContainers: [],
   ...m,
 });
 
@@ -94,10 +98,10 @@ describe("extractsFor", () => {
   const m = map({
     id: "m",
     extracts: [
-      { id: "1", name: "Crossroads", faction: "pmc", needsSwitch: false, transferItem: null },
-      { id: "2", name: "Car", faction: "pmc", needsSwitch: false, transferItem: { itemId: "rub", count: 7000 } },
-      { id: "3", name: "Scav only", faction: "scav", needsSwitch: false, transferItem: null },
-      { id: "4", name: "Shared", faction: "shared", needsSwitch: true, transferItem: null },
+      { id: "1", position: null, name: "Crossroads", faction: "pmc", needsSwitch: false, transferItem: null },
+      { id: "2", position: null, name: "Car", faction: "pmc", needsSwitch: false, transferItem: { itemId: "rub", count: 7000 } },
+      { id: "3", position: null, name: "Scav only", faction: "scav", needsSwitch: false, transferItem: null },
+      { id: "4", position: null, name: "Shared", faction: "shared", needsSwitch: true, transferItem: null },
     ],
   });
 
@@ -114,10 +118,10 @@ describe("keysForMap", () => {
   const m = map({
     id: "m",
     locks: [
-      { id: "l1", keyId: "cheap", lockType: "door", needsPower: false },
-      { id: "l2", keyId: "pricey", lockType: "door", needsPower: false },
-      { id: "l3", keyId: "mine", lockType: "container", needsPower: true },
-      { id: "l4", keyId: "pricey", lockType: "door", needsPower: false },
+      { id: "l1", position: null, keyId: "cheap", lockType: "door", needsPower: false },
+      { id: "l2", position: null, keyId: "pricey", lockType: "door", needsPower: false },
+      { id: "l3", position: null, keyId: "mine", lockType: "container", needsPower: true },
+      { id: "l4", position: null, keyId: "pricey", lockType: "door", needsPower: false },
     ],
   });
   const items = new Map([

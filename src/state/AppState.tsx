@@ -10,6 +10,7 @@ import {
   type RecentCompletion,
 } from "../lib/progress";
 import type { Faction } from "../lib/quests";
+import { EMPTY_SESSION, type RaidSession } from "../lib/raidSession";
 
 interface Progress {
   completedTasks: string[];
@@ -17,6 +18,7 @@ interface Progress {
   playerLevel: number;
   ownedKeys?: string[];
   recentlyCompleted?: RecentCompletion[];
+  raid?: RaidSession;
 }
 
 interface Settings {
@@ -45,6 +47,9 @@ interface AppState {
 
   ownedKeys: ReadonlySet<string>;
   toggleOwnedKey: (itemId: string) => void;
+
+  raid: RaidSession;
+  updateRaid: (change: (session: RaidSession) => RaidSession) => void;
 
   settings: Settings;
   updateSettings: (patch: Partial<Settings>) => void;
@@ -98,6 +103,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
             ownedKeys: keys.includes(itemId) ? keys.filter((k) => k !== itemId) : [...keys, itemId],
           };
         }),
+      raid: { ...EMPTY_SESSION, ...progress.raid },
+      updateRaid: (change) =>
+        setProgress((p) => ({ ...p, raid: change({ ...EMPTY_SESSION, ...p.raid }) })),
       starred: new Set(starredList),
       toggleStar: (itemId) =>
         setStarred((s) => (s.includes(itemId) ? s.filter((i) => i !== itemId) : [...s, itemId])),

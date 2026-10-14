@@ -502,3 +502,154 @@ details .extract-req { color: var(--muted); }
 .btn.undo { min-height: 36px; }
 .link-btn { background: none; border: 0; color: var(--muted); padding: 6px; font-size: 0.85rem; }
 .link-btn:hover { color: var(--text); }
+
+/* Raid planner */
+.btn.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 700; }
+.btn.danger { background: #3a2420; color: var(--down); border-color: var(--down); font-weight: 700; }
+.map-header .start { margin-left: auto; padding: 10px 20px; font-size: 1rem; }
+.block { display: block; }
+
+.pick-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.pick-list > li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.pick-list > li.picked { border-color: var(--accent); }
+.pick-list > li > .quest-name { align-self: center; }
+.pick {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+.pick.on { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.pick-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.objectives.compact { margin: 4px 0 0; padding-left: 18px; font-size: 0.88rem; color: var(--muted); }
+
+/* Hunt */
+.hunt-editor { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.hunt-chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.hunt-chips li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 4px 2px 2px;
+  background: var(--surface-2);
+  border: 1px solid var(--quest);
+  border-radius: 6px;
+}
+.hunt-chips li.muted { border: 0; background: none; padding: 4px 0; }
+.hunt-chips li button { background: none; border: 0; color: var(--muted); font-size: 1.1rem; padding: 2px 6px; }
+.hunt-chips li.suggestion { border-style: dashed; border-color: var(--border); }
+.hunt-chips li.suggestion button { display: flex; align-items: center; gap: 6px; color: var(--text); font-size: 0.9rem; }
+.hunt-search { position: relative; }
+.hunt-search .search { width: 100%; }
+.search-results {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.search-results button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  background: none;
+  border: 0;
+  text-align: left;
+  border-radius: 6px;
+}
+.search-results button:hover:not(:disabled) { background: var(--surface-2); }
+.suggestions { display: flex; flex-direction: column; gap: 4px; }
+
+.hunt-results { display: flex; flex-direction: column; gap: 8px; }
+.hunt-card {
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--quest);
+  border-radius: 8px;
+}
+.hunt-card header { display: flex; align-items: center; gap: 10px; }
+.hunt-card header > div { flex: 1; min-width: 0; }
+.hunt-card h3 { margin: 0; font-size: 1rem; }
+.spot-groups { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 0.92rem; }
+.spot-groups li { display: flex; gap: 8px; }
+.spot-count { min-width: 28px; text-align: right; font-weight: 700; color: var(--quest); font-variant-numeric: tabular-nums; }
+.likely-room { color: var(--down); }
+.likely-room.owned { color: var(--keep); }
+details.containers { margin-top: 8px; font-size: 0.9rem; }
+details.containers summary { cursor: pointer; color: var(--hideout); }
+details.containers ul { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+details.containers li { display: flex; gap: 8px; }
+.chance { min-width: 52px; text-align: right; font-weight: 700; color: var(--hideout); font-variant-numeric: tabular-nums; }
+.hunt-keys .section-title { margin-top: 10px; }
+.source-note { margin-top: 4px; }
+
+/* Map */
+.raid-map { display: flex; flex-direction: column; gap: 6px; }
+.raid-map-canvas {
+  height: min(65vh, 560px);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #0b0b0a;
+}
+.raid-map-canvas.leaflet-container { background: #0b0b0a; font: inherit; }
+.chips.small button { min-height: 32px; padding: 4px 12px; font-size: 0.85rem; }
+.map-legend { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.map-legend button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  font-size: 0.8rem;
+}
+.map-legend button.off { opacity: 0.45; }
+.dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid #121210; }
+.leaflet-tooltip { background: var(--surface); color: var(--text); border-color: var(--border); }
+
+/* In raid */
+.raid-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  background: var(--surface);
+  border: 1px solid var(--down);
+  border-radius: 8px;
+}
+.raid-banner .map-title { display: inline; margin-right: 8px; }
+.raid-live { display: block; color: var(--down); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.05em; }
+.end-raid {
+  margin-bottom: 12px;
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+}
+.end-raid h3 { margin: 0 0 8px; font-size: 1rem; }
+.end-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+
+@media (max-width: 520px) {
+  .map-header .start { width: 100%; margin-left: 0; }
+  .raid-map-canvas { height: 60vh; }
+}

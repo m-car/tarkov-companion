@@ -12,6 +12,7 @@ const obj = (o: Partial<Objective>): Objective => ({
   items: [],
   foundInRaid: false,
   markerItem: null,
+  zones: [],
   ...o,
 });
 
