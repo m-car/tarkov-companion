@@ -1,6 +1,7 @@
 import type { Item } from "../../api/items";
 import type { Extract, GameMap } from "../../api/maps";
 import type { Task } from "../../api/tasks";
+import { Collapsible } from "../../components/Collapsible";
 import { ItemIcon } from "../../components/ItemIcon";
 import { Segmented } from "../../components/Segmented";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
@@ -61,10 +62,10 @@ export function ExtractsSection({
 }) {
   const [side, setSide] = useSide();
   const extracts = extractsFor(map, side);
+  const count = extracts.open.length + extracts.conditional.length;
   return (
-    <>
-      <div className="section-head">
-        <h2 className="section-title">Extracts</h2>
+    <Collapsible id="extracts" title="Extracts" meta={`(${count} ${side === "pmc" ? "PMC" : "Scav"})`}>
+      <div className="section-tools">
         <Segmented<Side>
           label="Side"
           value={side}
@@ -75,7 +76,7 @@ export function ExtractsSection({
           ]}
         />
       </div>
-      {extracts.open.length + extracts.conditional.length === 0 ? (
+      {count === 0 ? (
         <p className="hint">No extract data for this map.</p>
       ) : (
         <ul className="extract-list">
@@ -111,15 +112,14 @@ export function ExtractsSection({
           </ul>
         </details>
       )}
-    </>
+    </Collapsible>
   );
 }
 
 export function BossesSection({ map }: { map: GameMap }) {
   if (map.bosses.length === 0) return null;
   return (
-    <>
-      <h2 className="section-title">Bosses</h2>
+    <Collapsible id="bosses" title="Bosses" meta={`(${map.bosses.length})`}>
       <ul className="boss-list">
         {map.bosses.map((b) => (
           <li key={b.name}>
@@ -131,7 +131,7 @@ export function BossesSection({ map }: { map: GameMap }) {
           </li>
         ))}
       </ul>
-    </>
+    </Collapsible>
   );
 }
 

@@ -654,16 +654,17 @@ details.containers li { display: flex; gap: 8px; }
   .raid-map-canvas { height: 60vh; }
 }
 
-/* Collapsible quest picker */
-details.quest-picker { margin: 18px 0 8px; }
-details.quest-picker > summary { cursor: pointer; min-height: 32px; display: flex; align-items: center; gap: 6px; }
-details.quest-picker > summary .section-title { margin: 0; }
+/* Collapsible sections */
+details.collapsible { margin: 18px 0 8px; }
+details.collapsible > summary { cursor: pointer; min-height: 32px; display: flex; align-items: center; gap: 6px; }
+details.collapsible > summary .section-title { margin: 0; }
+.section-tools { display: flex; justify-content: flex-end; margin: 4px 0 8px; }
 .picker-actions { display: flex; gap: 4px; justify-content: flex-end; margin: 2px 0 4px; }
-.picked-summary { margin: -4px 0 8px; }
-details.quest-picker > summary { list-style: none; }
-details.quest-picker > summary::-webkit-details-marker { display: none; }
-details.quest-picker > summary::before { content: "▸"; color: var(--accent); width: 14px; }
-details.quest-picker[open] > summary::before { content: "▾"; }
+.collapsed-hint { margin: -4px 0 8px 20px; }
+details.collapsible > summary { list-style: none; }
+details.collapsible > summary::-webkit-details-marker { display: none; }
+details.collapsible > summary::before { content: "▸"; color: var(--accent); width: 14px; }
+details.collapsible[open] > summary::before { content: "▾"; }
 
 /* All keys hunt */
 .all-keys-toggle {

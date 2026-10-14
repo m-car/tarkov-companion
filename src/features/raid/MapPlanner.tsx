@@ -2,7 +2,7 @@ import { lazy, Suspense } from "react";
 import type { Item } from "../../api/items";
 import type { GameMap } from "../../api/maps";
 import type { Task } from "../../api/tasks";
-import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { Collapsible } from "../../components/Collapsible";
 import { setPickedQuests, startRaid, toggleQuest } from "../../lib/raidSession";
 import { useAppState } from "../../state/AppState";
 import { HuntEditor, HuntResults } from "./HuntPanel";
@@ -36,7 +36,6 @@ export function MapPlanner({
 }) {
   const { updateRaid } = useAppState();
   const plan = useRaidPlan(map, tasks);
-  const [questsOpen, setQuestsOpen] = useLocalStorage("tc.raidQuestsOpen", true);
 
   return (
     <>
@@ -51,17 +50,12 @@ export function MapPlanner({
         </button>
       </div>
 
-      <details
-        className="quest-picker"
-        open={questsOpen}
-        onToggle={(e) => setQuestsOpen(e.currentTarget.open)}
+      <Collapsible
+        id="raidQuests"
+        title="Quests for this raid"
+        meta={`(${plan.pickedIds.length} of ${plan.onMap.length} picked)`}
+        collapsedHint={plan.picked.map((q) => q.task.name).join(" · ")}
       >
-        <summary>
-          <span className="section-title">Quests for this raid</span>{" "}
-          <span className="muted">
-            ({plan.pickedIds.length} of {plan.onMap.length} picked)
-          </span>
-        </summary>
         {plan.onMap.length === 0 ? (
           <p className="hint">None of your available quests have objectives on {map.name}.</p>
         ) : (
@@ -105,10 +99,7 @@ export function MapPlanner({
             </ul>
           </>
         )}
-      </details>
-      {!questsOpen && plan.picked.length > 0 && (
-        <p className="picked-summary muted small">{plan.picked.map((q) => q.task.name).join(" · ")}</p>
-      )}
+      </Collapsible>
 
       <div className="bring-box">
         <span className="bring-title">Bring</span>
