@@ -27,6 +27,7 @@ export interface Item {
   low24hPrice: number | null;
   lastLowPrice: number | null;
   changeLast48hPercent: number | null;
+  isKey: boolean;
   sellFor: ItemPrice[];
   buyFor: ItemPrice[];
 }
@@ -98,6 +99,7 @@ export function buildItems(
     low24hPrice: raw.low24hPrice ?? null,
     lastLowPrice: raw.lastLowPrice ?? null,
     changeLast48hPercent: raw.changeLast48hPercent ?? null,
+    isKey: raw.types?.includes("keys") ?? false,
     // Same rules the tarkov.dev site uses for flea sell/buy prices.
     sellFor: [...fleaOffer(raw.lastLowPrice), ...offers(raw.sellToTrader)],
     buyFor: [...fleaOffer(raw.avg24hPrice ?? raw.lastLowPrice), ...offers(raw.buyFromTrader)],

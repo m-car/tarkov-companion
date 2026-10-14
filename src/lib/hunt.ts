@@ -129,3 +129,68 @@ export function huntKeys(results: HuntResult[]): HuntKey[] {
   }
   return [...keys.values()].sort((a, b) => b.spots - a.spots);
 }
+
+export interface KeySpot extends SpawnSpot {
+  /** Keys that can spawn at this spot. */
+  keyIds: string[];
+}
+
+export interface KeySpotGroup extends SpotGroup {
+  spots: KeySpot[];
+  /** Every key that can spawn somewhere in the group. */
+  keyIds: string[];
+}
+
+export interface AllKeysResult {
+  spots: KeySpot[];
+  groups: KeySpotGroup[];
+  /** Container types by chance of holding any key. */
+  containers: ContainerMatch[];
+}
+
+/** Every place a key can spawn on the map: loose spots and the containers most likely to hold one. */
+export function huntAllKeys(
+  map: GameMap,
+  config: MapConfig | undefined,
+  loot: ContainerLoot | null,
+  isKey: (itemId: string) => boolean,
+): AllKeysResult {
+  const spots: KeySpot[] = [];
+  for (const l of map.lootLoose) {
+    const keyIds = l.items.filter(isKey);
+    if (keyIds.length) spots.push({ ...describe(l.position, map, config), keyIds });
+  }
+  const groups = groupSpots(spots).map((g) => ({
+    ...g,
+    spots: g.spots as KeySpot[],
+    keyIds: [...new Set((g.spots as KeySpot[]).flatMap((s) => s.keyIds))],
+  }));
+
+  const byType = new Map<string, { typeName: string; positions: Position[] }>();
+  for (const c of map.lootContainers) {
+    const entry = byType.get(c.typeId) ?? { typeName: c.typeName, positions: [] };
+    entry.positions.push(c.position);
+    byType.set(c.typeId, entry);
+  }
+  const containers: ContainerMatch[] = [];
+  for (const [typeId, { typeName, positions }] of byType) {
+    const odds = loot?.containers[typeId]?.items ?? {};
+    // Chance of at least one key: 1 - product of each key's chance of missing.
+    let miss = 1;
+    for (const [itemId, chance] of Object.entries(odds)) {
+      if (isKey(itemId)) miss *= 1 - chance;
+    }
+    const chance = 1 - miss;
+    if (chance <= 0) continue;
+    containers.push({
+      typeId,
+      typeName,
+      chance,
+      positions,
+      areas: countBy(positions.map((p) => areaName(p, config))),
+      expected: chance * positions.length,
+    });
+  }
+  containers.sort((a, b) => b.expected - a.expected);
+  return { spots, groups, containers };
+}

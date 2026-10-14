@@ -37,19 +37,20 @@ export function useRaidPlan(map: GameMap, tasks: Task[]) {
   );
   const picked = useMemo(() => onMap.filter((q) => pickedIds.includes(q.task.id)), [onMap, pickedIds]);
   const bring = useMemo(() => bringList(map, picked), [map, picked]);
-  const hunt = useHunt(map, raid.huntItems);
+  const hunt = useHunt(map, raid.huntItems, Boolean(raid.huntAllKeys), itemsById);
 
   const pins = useMemo(
     () =>
       buildPins({
         map,
         hunt: hunt.results,
+        keySpawns: hunt.keySpawns,
         objectives: picked.flatMap((q) => q.objectives.map((objective) => ({ quest: q.task.name, objective }))),
         side,
         ownedKeys,
         itemsById,
       }),
-    [map, hunt.results, picked, side, ownedKeys, itemsById],
+    [map, hunt.results, hunt.keySpawns, picked, side, ownedKeys, itemsById],
   );
 
   return { available, onMap, onMapIds, pickedIds, picked, bring, hunt, pins };

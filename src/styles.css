@@ -664,3 +664,26 @@ details.quest-picker > summary { list-style: none; }
 details.quest-picker > summary::-webkit-details-marker { display: none; }
 details.quest-picker > summary::before { content: "▸"; color: var(--accent); width: 14px; }
 details.quest-picker[open] > summary::before { content: "▾"; }
+
+/* All keys hunt */
+.all-keys-toggle {
+  align-self: flex-start;
+  padding: 8px 14px;
+  min-height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  text-align: left;
+}
+.all-keys-toggle.on { border-color: #7fd0d9; color: #7fd0d9; background: #1f3236; }
+.keys-card { border-left-color: #7fd0d9; }
+.keys-icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  font-size: 1.4rem;
+  color: #7fd0d9;
+  background: var(--surface-2);
+  border-radius: 4px;
+}

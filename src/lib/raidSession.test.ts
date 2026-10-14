@@ -6,6 +6,7 @@ import {
   selectMap,
   startRaid,
   toggleHuntItem,
+  toggleHuntAllKeys,
   toggleQuest,
 } from "./raidSession";
 
@@ -36,6 +37,12 @@ describe("raid session", () => {
     s = selectMap(s, "woods");
     expect(s.questIds).toEqual([]);
     expect(s.huntItems).toEqual(["ledx"]);
+  });
+
+  it("toggles the all-keys hunt", () => {
+    const s = toggleHuntAllKeys(EMPTY_SESSION);
+    expect(s.huntAllKeys).toBe(true);
+    expect(toggleHuntAllKeys(s).huntAllKeys).toBe(false);
   });
 
   it("start and end", () => {

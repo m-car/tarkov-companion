@@ -18,6 +18,7 @@ const item = (o: Partial<Item> = {}): Item => ({
   low24hPrice: null,
   lastLowPrice: null,
   changeLast48hPercent: null,
+  isKey: false,
   sellFor: [],
   buyFor: [],
   ...o,

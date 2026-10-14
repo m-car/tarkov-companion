@@ -143,12 +143,13 @@ export function InRaidView({
         </details>
       )}
 
-      {plan.hunt.results.length > 0 && (
+      {(plan.hunt.results.length > 0 || plan.hunt.keySpawns) && (
         <>
           <h2 className="section-title">Hunting</h2>
           <HuntResults
             results={plan.hunt.results}
             keys={plan.hunt.keys}
+            keySpawns={plan.hunt.keySpawns}
             loot={plan.hunt.loot}
             itemsById={itemsById}
             compact

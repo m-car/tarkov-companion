@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Position } from "../../api/maps";
 import { floorLayer, type MapConfig } from "../../lib/mapGeo";
 
-export type PinKind = "hunt" | "container" | "lock" | "lockOwned" | "objective" | "extract" | "extractConditional";
+export type PinKind = "hunt" | "keySpawn" | "container" | "lock" | "lockOwned" | "objective" | "extract" | "extractConditional";
 
 export interface Pin {
   position: Position;
@@ -14,6 +14,7 @@ export interface Pin {
 
 const STYLE: Record<PinKind, { color: string; radius: number; name: string }> = {
   hunt: { color: "#e0a83a", radius: 7, name: "Hunt spawns" },
+  keySpawn: { color: "#7fd0d9", radius: 5, name: "Key spawns" },
   container: { color: "#5fa8d3", radius: 4, name: "Containers" },
   lock: { color: "#d9705c", radius: 6, name: "Locked doors" },
   lockOwned: { color: "#7fbf6a", radius: 6, name: "Doors you have keys for" },

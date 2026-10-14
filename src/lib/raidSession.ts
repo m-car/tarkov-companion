@@ -5,6 +5,8 @@ export interface RaidSession {
   questIds: string[];
   /** Items to keep an eye out for. */
   huntItems: string[];
+  /** Also show every key spawn on the map. */
+  huntAllKeys?: boolean;
   active: boolean;
   startedAt: number | null;
 }
@@ -54,4 +56,8 @@ export function startRaid(session: RaidSession, picked: string[], now = Date.now
 /** Ends the raid; quest picks reset for next time, the hunt list stays. */
 export function endRaid(session: RaidSession): RaidSession {
   return { ...session, active: false, startedAt: null, questIds: [] };
+}
+
+export function toggleHuntAllKeys(session: RaidSession): RaidSession {
+  return { ...session, huntAllKeys: !session.huntAllKeys };
 }

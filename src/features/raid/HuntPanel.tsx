@@ -2,7 +2,8 @@ import { useMemo, useState } from "react";
 import { searchItems, type Item } from "../../api/items";
 import type { GameMap } from "../../api/maps";
 import { ItemIcon } from "../../components/ItemIcon";
-import type { ContainerLoot, HuntKey, HuntResult } from "../../lib/hunt";
+import type { AllKeysResult, ContainerLoot, HuntKey, HuntResult } from "../../lib/hunt";
+import { toggleHuntAllKeys } from "../../lib/raidSession";
 import { formatPrice } from "../../lib/prices";
 import { useAppState } from "../../state/AppState";
 import { useNeeds } from "../../state/useGameData";
@@ -65,8 +66,18 @@ export function HuntEditor({
             </li>
           );
         })}
-        {raid.huntItems.length === 0 && <li className="muted">Nothing on your hunt list yet.</li>}
+        {raid.huntItems.length === 0 && !raid.huntAllKeys && (
+          <li className="muted">Nothing on your hunt list yet.</li>
+        )}
       </ul>
+      <button
+        className={`all-keys-toggle ${raid.huntAllKeys ? "on" : ""}`}
+        onClick={() => updateRaid(toggleHuntAllKeys)}
+        aria-pressed={Boolean(raid.huntAllKeys)}
+      >
+        ⚿ All keys {raid.huntAllKeys ? "· on" : ""}
+        <span className="muted small"> show every key spawn on {map.name}</span>
+      </button>
       <div className="hunt-search">
         <input
           type="search"
@@ -126,25 +137,115 @@ function needText(itemId: string, ctx: ReturnType<typeof useNeeds>["verdictConte
 }
 
 /** Where each hunt item can be found on the map, plus keys for the rooms they're likely in. */
+function AllKeysCard({
+  keySpawns,
+  itemsById,
+  compact,
+}: {
+  keySpawns: AllKeysResult;
+  itemsById: Map<string, Item>;
+  compact: boolean;
+}) {
+  const { ownedKeys } = useAppState();
+  const price = (id: string) => itemsById.get(id)?.avg24hPrice ?? itemsById.get(id)?.lastLowPrice ?? 0;
+  const byValue = (a: string, b: string) => price(b) - price(a);
+  const distinct = new Set(keySpawns.spots.flatMap((s) => s.keyIds));
+
+  return (
+    <article className="hunt-card keys-card">
+      <header>
+        <span className="keys-icon">⚿</span>
+        <div>
+          <h3>All keys</h3>
+          <span className="muted">
+            {keySpawns.spots.length} loose key spot{keySpawns.spots.length === 1 ? "" : "s"} ·{" "}
+            {distinct.size} different keys
+          </span>
+        </div>
+      </header>
+      {keySpawns.spots.length === 0 && (
+        <p className="hint small">No known loose key spawns on this map.</p>
+      )}
+      <ul className="spot-groups">
+        {keySpawns.groups.slice(0, compact ? 6 : 20).map((g) => {
+          const keys = [...g.keyIds].sort(byValue);
+          const behind = g.lock ? itemsById.get(g.lock.keyId) : undefined;
+          return (
+            <li key={`${g.area}|${g.floor}|${g.lock?.id}`}>
+              <span className="spot-count">{g.spots.length}×</span>
+              <span>
+                <strong>{g.area}</strong>
+                {g.floor && ` · ${g.floor}`}
+                {g.lock && (
+                  <span className={`likely-room ${ownedKeys.has(g.lock.keyId) ? "owned" : ""}`}>
+                    {" "}
+                    · behind {behind?.shortName ?? "a locked door"}
+                  </span>
+                )}
+                <span className="muted small block">
+                  {keys
+                    .slice(0, 4)
+                    .map((id) => {
+                      const p = price(id);
+                      return `${itemsById.get(id)?.shortName ?? id}${p ? ` (${Math.round(p / 1000)}k)` : ""}`;
+                    })
+                    .join(", ")}
+                  {keys.length > 4 && ` +${keys.length - 4} more`}
+                </span>
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+      {keySpawns.containers.length > 0 && (
+        <details className="containers" open={!compact}>
+          <summary>
+            Containers likeliest to hold a key <span className="muted">(SPT odds, may be outdated)</span>
+          </summary>
+          <ul>
+            {keySpawns.containers.slice(0, 6).map((c) => (
+              <li key={c.typeId}>
+                <span className="chance">{pct(c.chance)}</span>
+                <span>
+                  {c.typeName} <span className="muted">× {c.positions.length} on map</span>
+                  <span className="muted small block">
+                    {c.areas
+                      .slice(0, 4)
+                      .map((a) => `${a.area} ${a.count}`)
+                      .join(" · ")}
+                  </span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
+    </article>
+  );
+}
+
 export function HuntResults({
   results,
   keys,
+  keySpawns,
   loot,
   itemsById,
   compact = false,
 }: {
   results: HuntResult[];
   keys: HuntKey[];
+  keySpawns?: AllKeysResult | null;
   loot: ContainerLoot | null;
   itemsById: Map<string, Item>;
   compact?: boolean;
 }) {
   const { ownedKeys } = useAppState();
   const { verdictContext } = useNeeds();
-  if (results.length === 0) return null;
+  if (results.length === 0 && !keySpawns) return null;
 
   return (
     <div className="hunt-results">
+      {keySpawns && <AllKeysCard keySpawns={keySpawns} itemsById={itemsById} compact={compact} />}
       {results.map((r) => {
         const item = itemsById.get(r.itemId);
         const need = needText(r.itemId, verdictContext);

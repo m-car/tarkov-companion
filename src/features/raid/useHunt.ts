@@ -3,7 +3,8 @@ import { cached } from "../../api/client";
 import type { GameMap } from "../../api/maps";
 import mapConfigs from "../../data/mapConfigs.json";
 import { useLoader } from "../../hooks/useLoader";
-import { huntItem, huntKeys, type ContainerLoot } from "../../lib/hunt";
+import type { Item } from "../../api/items";
+import { huntAllKeys, huntItem, huntKeys, type ContainerLoot } from "../../lib/hunt";
 import type { MapConfig } from "../../lib/mapGeo";
 
 export function mapConfigFor(map: GameMap): MapConfig | undefined {
@@ -21,12 +22,27 @@ function loadContainerLoot(map: GameMap): Promise<ContainerLoot | null> {
   });
 }
 
-export function useHunt(map: GameMap, itemIds: string[]) {
+export function useHunt(
+  map: GameMap,
+  itemIds: string[],
+  allKeys = false,
+  itemsById: Map<string, Item> = new Map(),
+) {
   const loot = useLoader(() => loadContainerLoot(map), map.id);
   const config = mapConfigFor(map);
   const lootData = loot.status === "ready" ? loot.data : null;
   return useMemo(() => {
     const results = itemIds.map((id) => huntItem(id, map, config, lootData));
-    return { results, keys: huntKeys(results), config, loot: lootData, lootLoading: loot.status === "loading" };
-  }, [map, itemIds, config, lootData, loot.status]);
+    const keySpawns = allKeys
+      ? huntAllKeys(map, config, lootData, (id) => itemsById.get(id)?.isKey ?? false)
+      : null;
+    return {
+      results,
+      keys: huntKeys(results),
+      keySpawns,
+      config,
+      loot: lootData,
+      lootLoading: loot.status === "loading",
+    };
+  }, [map, itemIds, allKeys, itemsById, config, lootData, loot.status]);
 }

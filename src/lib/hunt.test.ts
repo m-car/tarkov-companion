@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { GameMap } from "../api/maps";
-import { huntItem, huntKeys, type ContainerLoot } from "./hunt";
+import { huntAllKeys, huntItem, huntKeys, type ContainerLoot } from "./hunt";
 import { areaName, floorName, nearbyLock, type MapConfig } from "./mapGeo";
 
 // Trimmed from tarkov.dev's Shoreline config.
@@ -113,6 +113,31 @@ describe("huntItem", () => {
 
   it("works without container data", () => {
     expect(huntItem("ledx", map, config, null).containers).toEqual([]);
+  });
+
+  it("finds every key spawn and the containers likeliest to hold any key", () => {
+    const keyMap: GameMap = {
+      ...map,
+      lootLoose: [
+        ...map.lootLoose,
+        { position: p(-330, 3, -81), items: ["keyA", "keyB"] },
+        { position: p(-210, -10, 172), items: ["keyB", "ledx"] },
+      ],
+    };
+    const keyLoot: ContainerLoot = {
+      fetchedAt: "x",
+      containers: {
+        medcase: { expectedItems: 2, items: { keyA: 0.1, keyB: 0.1, ledx: 0.5 } },
+        crate: { expectedItems: 4, items: { gpu: 0.01 } },
+      },
+    };
+    const r = huntAllKeys(keyMap, config, keyLoot, (id) => id.startsWith("key"));
+    expect(r.spots.map((s) => s.keyIds)).toEqual([["keyA", "keyB"], ["keyB"]]);
+    expect(r.groups.map((g) => [g.area, g.floor, g.lock?.keyId ?? null, g.keyIds])).toEqual([
+      ["East Wing", "3rd Floor", "key306", ["keyA", "keyB"]],
+      ["Power Station", null, null, ["keyB"]],
+    ]);
+    expect(r.containers.map((c) => [c.typeName, Math.round(c.chance * 100) / 100])).toEqual([["Medcase", 0.19]]);
   });
 
   it("lists keys for rooms hunt items are likely behind", () => {

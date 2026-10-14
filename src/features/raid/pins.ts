@@ -1,7 +1,7 @@
 import type { Item } from "../../api/items";
 import type { GameMap } from "../../api/maps";
 import type { Objective } from "../../api/tasks";
-import type { HuntResult } from "../../lib/hunt";
+import type { AllKeysResult, HuntResult } from "../../lib/hunt";
 import { extractsFor, type Side } from "../../lib/raid";
 import type { Pin } from "./RaidMap";
 
@@ -9,6 +9,7 @@ import type { Pin } from "./RaidMap";
 export function buildPins({
   map,
   hunt,
+  keySpawns,
   objectives,
   side,
   ownedKeys,
@@ -16,6 +17,7 @@ export function buildPins({
 }: {
   map: GameMap;
   hunt: HuntResult[];
+  keySpawns?: AllKeysResult | null;
   objectives: { quest: string; objective: Objective }[];
   side: Side;
   ownedKeys: ReadonlySet<string>;
@@ -33,6 +35,25 @@ export function buildPins({
     for (const c of r.containers.slice(0, 3)) {
       for (const position of c.positions) {
         pins.push({ position, kind: "container", label: `${c.typeName} (${name(r.itemId)})` });
+      }
+    }
+  }
+
+  if (keySpawns) {
+    const byValue = (a: string, b: string) =>
+      (itemsById.get(b)?.avg24hPrice ?? 0) - (itemsById.get(a)?.avg24hPrice ?? 0);
+    for (const spot of keySpawns.spots) {
+      const keys = [...spot.keyIds].sort(byValue);
+      const more = keys.length > 3 ? ` +${keys.length - 3}` : "";
+      pins.push({
+        position: spot.position,
+        kind: "keySpawn",
+        label: `Keys: ${keys.slice(0, 3).map(name).join(", ")}${more}`,
+      });
+    }
+    for (const c of keySpawns.containers.slice(0, 2)) {
+      for (const position of c.positions) {
+        pins.push({ position, kind: "container", label: `${c.typeName} (any key)` });
       }
     }
   }

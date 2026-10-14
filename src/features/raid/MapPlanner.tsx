@@ -124,6 +124,7 @@ export function MapPlanner({
       <HuntResults
         results={plan.hunt.results}
         keys={plan.hunt.keys}
+        keySpawns={plan.hunt.keySpawns}
         loot={plan.hunt.loot}
         itemsById={itemsById}
       />
