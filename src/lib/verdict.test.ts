@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Item } from "../api/items";
 import type { Station } from "../api/hideout";
-import { hideoutItemNeeds, missingStationRequirements } from "./hideout";
+import { hideoutItemNeeds, missingStationRequirements, requirementKey } from "./hideout";
 import { itemVerdict, type VerdictContext } from "./verdict";
 
 const item = (o: Partial<Item> = {}): Item => ({
@@ -88,6 +88,16 @@ describe("hideout", () => {
     });
     expect(hideoutItemNeeds(stations, {}).get("salewa")?.count).toBe(3);
     expect(hideoutItemNeeds(stations, {}).has("5449016a4bdc2d6f028b456f")).toBe(false);
+  });
+
+  it("leaves out requirements marked as collected", () => {
+    const collected = new Set([requirementKey("med", 2, "salewa")]);
+    expect(hideoutItemNeeds(stations, { med: 1 }, collected).has("salewa")).toBe(false);
+    // Only that level's requirement is marked; level 1's still counts from scratch.
+    expect(hideoutItemNeeds(stations, {}, collected).get("salewa")).toEqual({
+      count: 1,
+      upgrades: ["Medstation 1"],
+    });
   });
 
   it("reports missing station requirements", () => {

@@ -15,10 +15,15 @@ export interface HideoutNeed {
   upgrades: string[];
 }
 
-/** Items needed for every upgrade above each station's current level. */
+/** Key for one item requirement of one station level, used to mark it collected. */
+export const requirementKey = (stationId: string, level: number, itemId: string) =>
+  `${stationId}:${level}:${itemId}`;
+
+/** Items needed for every upgrade above each station's current level, minus ones marked collected. */
 export function hideoutItemNeeds(
   stations: Station[],
   levels: HideoutLevels,
+  collected: ReadonlySet<string> = new Set(),
 ): Map<string, HideoutNeed> {
   const needs = new Map<string, HideoutNeed>();
   for (const station of stations) {
@@ -27,6 +32,7 @@ export function hideoutItemNeeds(
       if (level.level <= current) continue;
       for (const req of level.items) {
         if (CURRENCY_IDS.has(req.itemId)) continue;
+        if (collected.has(requirementKey(station.id, level.level, req.itemId))) continue;
         const need = needs.get(req.itemId) ?? { count: 0, upgrades: [] };
         need.count += req.count;
         need.upgrades.push(`${station.name} ${level.level}`);

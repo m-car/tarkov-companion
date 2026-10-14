@@ -688,3 +688,20 @@ details.collapsible[open] > summary::before { content: "▾"; }
   background: var(--surface-2);
   border-radius: 4px;
 }
+
+/* Hideout collected marks */
+.station-next-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.req {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 2px 8px 2px 2px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.req.got { border-color: var(--keep); background: #1f2e1c; }
+.req.got span:not(.req-check) { color: var(--muted); text-decoration: line-through; }
+.req-check { min-width: 12px; color: var(--keep); font-weight: 700; }
+.badge.ready { background: #1f2e1c; color: var(--keep); align-self: flex-start; margin-left: 0; }

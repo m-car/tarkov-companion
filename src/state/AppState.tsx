@@ -17,6 +17,8 @@ interface Progress {
   hideoutLevels: HideoutLevels;
   playerLevel: number;
   ownedKeys?: string[];
+  /** Hideout item requirements you've already collected (see requirementKey). */
+  hideoutCollected?: string[];
   recentlyCompleted?: RecentCompletion[];
   raid?: RaidSession;
 }
@@ -41,6 +43,8 @@ interface AppState {
   setPlayerLevel: (level: number) => void;
   hideoutLevels: HideoutLevels;
   setHideoutLevel: (stationId: string, level: number) => void;
+  hideoutCollected: ReadonlySet<string>;
+  setHideoutCollected: (keys: string[], collected: boolean) => void;
 
   starred: ReadonlySet<string>;
   toggleStar: (itemId: string) => void;
@@ -106,6 +110,16 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       raid: { ...EMPTY_SESSION, ...progress.raid },
       updateRaid: (change) =>
         setProgress((p) => ({ ...p, raid: change({ ...EMPTY_SESSION, ...p.raid }) })),
+      hideoutCollected: new Set(progress.hideoutCollected ?? []),
+      setHideoutCollected: (keys, collected) =>
+        setProgress((p) => {
+          const next = new Set(p.hideoutCollected ?? []);
+          for (const k of keys) {
+            if (collected) next.add(k);
+            else next.delete(k);
+          }
+          return { ...p, hideoutCollected: [...next] };
+        }),
       starred: new Set(starredList),
       toggleStar: (itemId) =>
         setStarred((s) => (s.includes(itemId) ? s.filter((i) => i !== itemId) : [...s, itemId])),

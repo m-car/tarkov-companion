@@ -29,7 +29,7 @@ export function useGameData() {
 /** Quest status and what your quests and hideout still need, from saved progress. */
 export function useNeeds() {
   const { tasks, stations } = useGameData();
-  const { completed, playerLevel, hideoutLevels, starred, settings } = useAppState();
+  const { completed, playerLevel, hideoutLevels, hideoutCollected, starred, settings } = useAppState();
 
   return useMemo(() => {
     const progress = { completed, playerLevel, faction: settings.faction };
@@ -37,7 +37,7 @@ export function useNeeds() {
     const stationList = stations.status === "ready" ? stations.data : [];
     const verdictContext: VerdictContext = {
       questNeeds: questItemNeeds(taskList, progress),
-      hideoutNeeds: hideoutItemNeeds(stationList, hideoutLevels),
+      hideoutNeeds: hideoutItemNeeds(stationList, hideoutLevels, hideoutCollected),
       starred,
       perSlotThreshold: settings.perSlotThreshold,
     };
@@ -48,5 +48,5 @@ export function useNeeds() {
       // Verdicts are incomplete until quest and hideout data have loaded.
       needsReady: tasks.status === "ready" && stations.status === "ready",
     };
-  }, [tasks, stations, completed, playerLevel, hideoutLevels, starred, settings]);
+  }, [tasks, stations, completed, playerLevel, hideoutLevels, hideoutCollected, starred, settings]);
 }
