@@ -2,7 +2,8 @@ import { lazy, Suspense } from "react";
 import type { Item } from "../../api/items";
 import type { GameMap } from "../../api/maps";
 import type { Task } from "../../api/tasks";
-import { startRaid, toggleQuest } from "../../lib/raidSession";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { setPickedQuests, startRaid, toggleQuest } from "../../lib/raidSession";
 import { useAppState } from "../../state/AppState";
 import { HuntEditor, HuntResults } from "./HuntPanel";
 import { BossesSection, BringList, ExtractsSection, KeysSection } from "./MapSections";
@@ -35,6 +36,7 @@ export function MapPlanner({
 }) {
   const { updateRaid } = useAppState();
   const plan = useRaidPlan(map, tasks);
+  const [questsOpen, setQuestsOpen] = useLocalStorage("tc.raidQuestsOpen", true);
 
   return (
     <>
@@ -49,44 +51,63 @@ export function MapPlanner({
         </button>
       </div>
 
-      <h2 className="section-title">
-        Quests for this raid{" "}
-        <span className="muted">
-          ({plan.pickedIds.length} of {plan.onMap.length} picked)
-        </span>
-      </h2>
-      {plan.onMap.length === 0 ? (
-        <p className="hint">None of your available quests have objectives on {map.name}.</p>
-      ) : (
-        <ul className="pick-list">
-          {plan.onMap.map(({ task, objectives }) => {
-            const on = plan.pickedIds.includes(task.id);
-            return (
-              <li key={task.id} className={on ? "picked" : ""}>
-                <button
-                  className={`pick ${on ? "on" : ""}`}
-                  onClick={() => updateRaid((s) => toggleQuest(s, task.id, plan.onMapIds))}
-                  aria-pressed={on}
-                  aria-label={on ? `Skip ${task.name} this raid` : `Do ${task.name} this raid`}
-                >
-                  {on ? "✓" : "+"}
-                </button>
-                <div className="pick-body">
-                  <span className="quest-name">{task.name}</span>
-                  <span className="quest-meta">
-                    {task.traderName}
-                    {task.kappaRequired && <span className="badge kappa">Kappa</span>}
-                  </span>
-                  <ul className="objectives compact">
-                    {objectives.map((o) => (
-                      <li key={o.id}>{o.description}</li>
-                    ))}
-                  </ul>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+      <details
+        className="quest-picker"
+        open={questsOpen}
+        onToggle={(e) => setQuestsOpen(e.currentTarget.open)}
+      >
+        <summary>
+          <span className="section-title">Quests for this raid</span>{" "}
+          <span className="muted">
+            ({plan.pickedIds.length} of {plan.onMap.length} picked)
+          </span>
+        </summary>
+        {plan.onMap.length === 0 ? (
+          <p className="hint">None of your available quests have objectives on {map.name}.</p>
+        ) : (
+          <>
+            <div className="picker-actions">
+              <button className="link-btn" onClick={() => updateRaid((s) => setPickedQuests(s, plan.onMapIds))}>
+                Pick all
+              </button>
+              <button className="link-btn" onClick={() => updateRaid((s) => setPickedQuests(s, []))}>
+                Clear
+              </button>
+            </div>
+            <ul className="pick-list">
+              {plan.onMap.map(({ task, objectives }) => {
+                const on = plan.pickedIds.includes(task.id);
+                return (
+                  <li key={task.id} className={on ? "picked" : ""}>
+                    <button
+                      className={`pick ${on ? "on" : ""}`}
+                      onClick={() => updateRaid((s) => toggleQuest(s, task.id, plan.onMapIds))}
+                      aria-pressed={on}
+                      aria-label={on ? `Skip ${task.name} this raid` : `Do ${task.name} this raid`}
+                    >
+                      {on ? "✓" : "+"}
+                    </button>
+                    <div className="pick-body">
+                      <span className="quest-name">{task.name}</span>
+                      <span className="quest-meta">
+                        {task.traderName}
+                        {task.kappaRequired && <span className="badge kappa">Kappa</span>}
+                      </span>
+                      <ul className="objectives compact">
+                        {objectives.map((o) => (
+                          <li key={o.id}>{o.description}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </>
+        )}
+      </details>
+      {!questsOpen && plan.picked.length > 0 && (
+        <p className="picked-summary muted small">{plan.picked.map((q) => q.task.name).join(" · ")}</p>
       )}
 
       <div className="bring-box">

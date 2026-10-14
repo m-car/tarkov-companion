@@ -653,3 +653,14 @@ details.containers li { display: flex; gap: 8px; }
   .map-header .start { width: 100%; margin-left: 0; }
   .raid-map-canvas { height: 60vh; }
 }
+
+/* Collapsible quest picker */
+details.quest-picker { margin: 18px 0 8px; }
+details.quest-picker > summary { cursor: pointer; min-height: 32px; display: flex; align-items: center; gap: 6px; }
+details.quest-picker > summary .section-title { margin: 0; }
+.picker-actions { display: flex; gap: 4px; justify-content: flex-end; margin: 2px 0 4px; }
+.picked-summary { margin: -4px 0 8px; }
+details.quest-picker > summary { list-style: none; }
+details.quest-picker > summary::-webkit-details-marker { display: none; }
+details.quest-picker > summary::before { content: "▸"; color: var(--accent); width: 14px; }
+details.quest-picker[open] > summary::before { content: "▾"; }

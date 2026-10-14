@@ -12,12 +12,17 @@ import {
 describe("raid session", () => {
   const available = ["a", "b", "c"];
 
-  it("picks every available quest until you change it", () => {
+  it("starts with nothing picked; you add the quests you want", () => {
     const s = selectMap(EMPTY_SESSION, "shoreline");
-    expect(pickedQuests(s, available)).toEqual(["a", "b", "c"]);
-    const s2 = toggleQuest(s, "b", available);
+    expect(pickedQuests(s, available)).toEqual([]);
+    const s2 = toggleQuest(toggleQuest(s, "c", available), "a", available);
     expect(pickedQuests(s2, available)).toEqual(["a", "c"]);
-    expect(pickedQuests(toggleQuest(s2, "b", available), available)).toEqual(["a", "b", "c"]);
+    expect(pickedQuests(toggleQuest(s2, "c", available), available)).toEqual(["a"]);
+  });
+
+  it("treats older saved 'all' sessions as none picked", () => {
+    const old = { ...EMPTY_SESSION, questIds: null as unknown as string[] };
+    expect(pickedQuests(old, available)).toEqual([]);
   });
 
   it("drops picks that are no longer available (e.g. completed)", () => {
@@ -29,15 +34,15 @@ describe("raid session", () => {
     let s = toggleHuntItem(selectMap(EMPTY_SESSION, "shoreline"), "ledx");
     s = toggleQuest(s, "a", available);
     s = selectMap(s, "woods");
-    expect(s.questIds).toBeNull();
+    expect(s.questIds).toEqual([]);
     expect(s.huntItems).toEqual(["ledx"]);
   });
 
   it("start and end", () => {
-    let s = selectMap(EMPTY_SESSION, "shoreline");
+    let s = toggleQuest(selectMap(EMPTY_SESSION, "shoreline"), "b", available);
     s = startRaid(s, pickedQuests(s, available), 100);
-    expect(s).toMatchObject({ active: true, startedAt: 100, questIds: ["a", "b", "c"] });
+    expect(s).toMatchObject({ active: true, startedAt: 100, questIds: ["b"] });
     s = endRaid(s);
-    expect(s).toMatchObject({ active: false, startedAt: null, questIds: null, mapId: "shoreline" });
+    expect(s).toMatchObject({ active: false, startedAt: null, questIds: [], mapId: "shoreline" });
   });
 });

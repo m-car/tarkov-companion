@@ -32,7 +32,7 @@ export function useRaidPlan(map: GameMap, tasks: Task[]) {
   );
   const onMapIds = useMemo(() => onMap.map((q) => q.task.id), [onMap]);
   const pickedIds = useMemo(
-    () => (raid.mapId === map.id ? pickedQuests(raid, onMapIds) : onMapIds),
+    () => (raid.mapId === map.id ? pickedQuests(raid, onMapIds) : []),
     [raid, map.id, onMapIds],
   );
   const picked = useMemo(() => onMap.filter((q) => pickedIds.includes(q.task.id)), [onMap, pickedIds]);
