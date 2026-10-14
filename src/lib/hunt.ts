@@ -43,10 +43,13 @@ export interface HuntResult {
 const doorLocks = (map: GameMap) => map.locks.filter((l) => l.lockType === "door" && l.position);
 
 function describe(position: Position, map: GameMap, config: MapConfig | undefined): SpawnSpot {
+  const area = areaName(position, config);
+  const floor = floorName(position, config);
   return {
     position,
-    area: areaName(position, config),
-    floor: floorName(position, config),
+    area,
+    // On label-less maps the area already is the level name.
+    floor: floor === area ? null : floor,
     lock: nearbyLock(position, doorLocks(map)),
   };
 }

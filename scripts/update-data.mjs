@@ -78,9 +78,12 @@ async function updateMapConfigs() {
   for (const group of maps) {
     const interactive = group.maps?.find((m) => m.projection === "interactive");
     if (!interactive) continue;
-    configs[group.normalizedName] = Object.fromEntries(
+    const config = Object.fromEntries(
       KEEP.filter((k) => interactive[k] !== undefined).map((k) => [k, interactive[k]]),
     );
+    configs[group.normalizedName] = config;
+    // Variants like Night Factory and Ground Zero 21+ share the base map's setup.
+    for (const alt of interactive.altMaps ?? []) configs[alt] = config;
   }
   await writeFile("src/data/mapConfigs.json", JSON.stringify(configs, null, 1) + "\n");
   console.log(`map configs: ${Object.keys(configs).join(", ")}`);

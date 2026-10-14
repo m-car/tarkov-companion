@@ -53,7 +53,10 @@ export function nearestLabel(position: Position, config: MapConfig | undefined):
 }
 
 export function areaName(position: Position, config: MapConfig | undefined): string {
-  return nearestLabel(position, config)?.text ?? "Unknown area";
+  const label = nearestLabel(position, config);
+  if (label) return label.text;
+  // Maps without landmark labels (e.g. Icebreaker) often name their levels instead.
+  return floorLayer(position, config)?.name ?? "Unmarked area";
 }
 
 const inRect = (p: Position, rect: (number[] | string)[]) => {
@@ -78,9 +81,18 @@ export function floorLayer(position: Position, config: MapConfig | undefined): M
   return null;
 }
 
+// Maps whose ground level spans a narrow height band (Streets, Factory, Icebreaker)
+// have flat terrain, so height alone tells you the floor anywhere on them.
+const FLAT_MAP_SPAN = 100;
+const isFlatMap = (config: MapConfig | undefined) => {
+  const range = config?.heightRange;
+  return Boolean(range && range[1] - range[0] < FLAT_MAP_SPAN);
+};
+
 /**
- * Human floor name, only where it means something: inside multi-level buildings or
- * bounded areas like underground sections. Outdoors, terrain height would mislead.
+ * Human floor name, only where it means something: inside outlined buildings or
+ * multi-level landmarks, or anywhere on flat maps. On hilly maps (Shoreline,
+ * Customs) terrain height outdoors would be mistaken for a floor.
  */
 export function floorName(position: Position, config: MapConfig | undefined): string | null {
   const layer = floorLayer(position, config);
@@ -88,6 +100,7 @@ export function floorName(position: Position, config: MapConfig | undefined): st
   const bounded = layer?.extents.some((e) => e.bounds?.some((rect) => inRect(position, rect)));
   if (bounded) return layer!.name;
   if (label && isBuildingLabel(label)) return layer?.name ?? "Ground floor";
+  if (isFlatMap(config)) return layer?.name ?? null;
   return null;
 }
 

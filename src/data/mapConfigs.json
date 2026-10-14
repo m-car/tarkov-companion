@@ -695,6 +695,228 @@
    }
   ]
  },
+ "ground-zero-21": {
+  "key": "ground-zero",
+  "svgPath": "https://assets.tarkov.dev/maps/svg/GroundZero.svg",
+  "svgLayer": "Ground_Level",
+  "bounds": [
+   [
+    249,
+    -124
+   ],
+   [
+    -99,
+    364
+   ]
+  ],
+  "transform": [
+   0.524,
+   167.3,
+   0.524,
+   65.1
+  ],
+  "coordinateRotation": 180,
+  "minZoom": 1,
+  "maxZoom": 6,
+  "tilePath": "https://assets.tarkov.dev/maps/groundzero/main_summer/{z}/{x}/{y}.png",
+  "tileSize": 256,
+  "heightRange": [
+   -1000,
+   28
+  ],
+  "layers": [
+   {
+    "name": "2nd Floor",
+    "svgLayer": "Second_Floor",
+    "tilePath": "https://assets.tarkov.dev/maps/groundzero/2nd/{z}/{x}/{y}.png",
+    "show": false,
+    "extents": [
+     {
+      "height": [
+       28,
+       32.3
+      ]
+     },
+     {
+      "height": [
+       26,
+       31
+      ],
+      "bounds": [
+       [
+        [
+         98,
+         216
+        ],
+        [
+         91,
+         228
+        ],
+        "m showroom"
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "name": "3rd Floor",
+    "svgLayer": "Third_Floor",
+    "tilePath": "https://assets.tarkov.dev/maps/groundzero/3rd/{z}/{x}/{y}.png",
+    "show": false,
+    "extents": [
+     {
+      "height": [
+       32.3,
+       1000
+      ]
+     }
+    ]
+   },
+   {
+    "name": "Garage",
+    "svgLayer": "Underground_Level",
+    "tilePath": "https://assets.tarkov.dev/maps/groundzero/garage/{z}/{x}/{y}.png",
+    "show": false,
+    "extents": [
+     {
+      "height": [
+       -1000,
+       21
+      ],
+      "bounds": [
+       [
+        [
+         117,
+         -100
+        ],
+        [
+         43,
+         190
+        ],
+        "garage"
+       ],
+       [
+        [
+         143,
+         49
+        ],
+        [
+         117,
+         80
+        ],
+        "underpass"
+       ]
+      ]
+     }
+    ]
+   }
+  ],
+  "labels": [
+   {
+    "position": [
+     -50,
+     0
+    ],
+    "text": "TerraGroup"
+   },
+   {
+    "position": [
+     150,
+     1
+    ],
+    "text": "Skyside"
+   },
+   {
+    "position": [
+     141,
+     142
+    ],
+    "text": "Fusion"
+   },
+   {
+    "position": [
+     14,
+     201
+    ],
+    "text": "Empire"
+   },
+   {
+    "position": [
+     115,
+     285
+    ],
+    "text": "Capital Insight"
+   },
+   {
+    "position": [
+     2,
+     324
+    ],
+    "text": "Nakatani"
+   },
+   {
+    "position": [
+     80,
+     -118
+    ],
+    "text": "Elemental Global"
+   },
+   {
+    "position": [
+     115,
+     104
+    ],
+    "text": "Oasis",
+    "size": 70,
+    "top": 30,
+    "bottom": 22
+   },
+   {
+    "position": [
+     115,
+     30
+    ],
+    "text": "ASAP Winery",
+    "size": 70,
+    "top": 27,
+    "bottom": 22
+   },
+   {
+    "position": [
+     43,
+     150
+    ],
+    "text": "Tarbank",
+    "size": 70
+   },
+   {
+    "position": [
+     58,
+     234
+    ],
+    "text": "GAGRIN Hotel",
+    "size": 70
+   },
+   {
+    "position": [
+     97,
+     223
+    ],
+    "text": "M Showroom",
+    "size": 70
+   },
+   {
+    "position": [
+     -13,
+     48
+    ],
+    "text": "Science Office",
+    "top": 28,
+    "bottom": 28,
+    "size": 60
+   }
+  ]
+ },
  "customs": {
   "key": "customs",
   "svgPath": "https://assets.tarkov.dev/maps/svg/Customs.svg",
@@ -1346,6 +1568,349 @@
   ]
  },
  "factory": {
+  "key": "factory",
+  "svgPath": "https://assets.tarkov.dev/maps/svg/Factory.svg",
+  "svgLayer": "Ground_Floor",
+  "bounds": [
+   [
+    77,
+    -64.5
+   ],
+   [
+    -65.5,
+    67.4
+   ]
+  ],
+  "transform": [
+   1.629,
+   119.9,
+   1.629,
+   139.3
+  ],
+  "coordinateRotation": 90,
+  "minZoom": 1,
+  "maxZoom": 6,
+  "tilePath": "https://assets.tarkov.dev/maps/factory/main/{z}/{x}/{y}.png",
+  "tileSize": 256,
+  "heightRange": [
+   -1,
+   3
+  ],
+  "layers": [
+   {
+    "name": "2nd Floor",
+    "tilePath": "https://assets.tarkov.dev/maps/factory/2nd/{z}/{x}/{y}.png",
+    "svgLayer": "Second_Floor",
+    "show": false,
+    "extents": [
+     {
+      "height": [
+       3,
+       6
+      ]
+     }
+    ]
+   },
+   {
+    "name": "3rd Floor",
+    "tilePath": "https://assets.tarkov.dev/maps/factory/3rd/{z}/{x}/{y}.png",
+    "svgLayer": "Third_Floor",
+    "show": false,
+    "extents": [
+     {
+      "height": [
+       6,
+       10000
+      ]
+     }
+    ]
+   },
+   {
+    "name": "Tunnels",
+    "tilePath": "https://assets.tarkov.dev/maps/factory/tunnels/{z}/{x}/{y}.png",
+    "svgLayer": "Basement",
+    "show": false,
+    "extents": [
+     {
+      "height": [
+       -10000,
+       -1
+      ]
+     }
+    ]
+   }
+  ],
+  "labels": [
+   {
+    "position": [
+     21,
+     39
+    ],
+    "text": "Office Building",
+    "bottom": -1,
+    "top": 10000,
+    "size": 80
+   },
+   {
+    "position": [
+     15.5,
+     39
+    ],
+    "text": "Main Office",
+    "bottom": 6,
+    "top": 10000,
+    "size": 80
+   },
+   {
+    "position": [
+     24.5,
+     39
+    ],
+    "text": "Breach Room",
+    "bottom": 6,
+    "top": 10000,
+    "size": 80
+   },
+   {
+    "position": [
+     30.5,
+     39
+    ],
+    "text": "Locked Office",
+    "bottom": 6,
+    "top": 10000,
+    "size": 80
+   },
+   {
+    "position": [
+     35,
+     39
+    ],
+    "text": "North Stairs",
+    "bottom": -1,
+    "top": 10000,
+    "size": 80
+   },
+   {
+    "position": [
+     9,
+     39
+    ],
+    "text": "South Stairs",
+    "bottom": -1,
+    "top": 10000,
+    "size": 80
+   },
+   {
+    "position": [
+     34,
+     26
+    ],
+    "text": "Sky Bridge",
+    "bottom": 6,
+    "top": 10000,
+    "size": 80
+   },
+   {
+    "position": [
+     29.5,
+     17
+    ],
+    "text": "Connector",
+    "bottom": -1,
+    "top": 10000,
+    "size": 80
+   },
+   {
+    "position": [
+     29,
+     41
+    ],
+    "text": "Locker Rooms",
+    "bottom": 3,
+    "top": 5,
+    "size": 80
+   },
+   {
+    "position": [
+     15,
+     41
+    ],
+    "text": "Sinks",
+    "bottom": 3,
+    "top": 5,
+    "size": 80
+   },
+   {
+    "position": [
+     20,
+     42
+    ],
+    "text": "Hole",
+    "bottom": 3,
+    "top": 5,
+    "size": 80
+   },
+   {
+    "position": [
+     -3,
+     37
+    ],
+    "text": "Platform",
+    "bottom": -1,
+    "top": 5,
+    "size": 80
+   },
+   {
+    "position": [
+     -21,
+     27
+    ],
+    "text": "Servers",
+    "bottom": 3,
+    "top": 5,
+    "size": 80
+   },
+   {
+    "position": [
+     -18,
+     -29
+    ],
+    "text": "Med Tent",
+    "bottom": -1,
+    "top": 2,
+    "size": 80
+   },
+   {
+    "position": [
+     4.5,
+     10.5
+    ],
+    "text": "Silos",
+    "bottom": -1,
+    "top": 2
+   },
+   {
+    "position": [
+     30,
+     -8.5
+    ],
+    "text": "Heli Crash",
+    "bottom": -1,
+    "top": 10000,
+    "size": 80
+   },
+   {
+    "position": [
+     -1,
+     16
+    ],
+    "text": "Pit",
+    "bottom": -10000,
+    "top": -2,
+    "size": 80
+   },
+   {
+    "position": [
+     -2,
+     -24.5
+    ],
+    "text": "Underground Stash",
+    "bottom": -10000,
+    "top": -2,
+    "size": 80
+   },
+   {
+    "position": [
+     -20.5,
+     23
+    ],
+    "text": "Scav Bunker",
+    "bottom": -1,
+    "top": 2,
+    "size": 80
+   },
+   {
+    "position": [
+     -18,
+     50
+    ],
+    "text": "Blue Containers",
+    "bottom": -1,
+    "top": 2
+   },
+   {
+    "position": [
+     -45.5,
+     61
+    ],
+    "text": "Wood Room",
+    "bottom": -1,
+    "top": 2,
+    "size": 80
+   },
+   {
+    "position": [
+     68.25,
+     -20
+    ],
+    "text": "Glass Hall",
+    "bottom": -1,
+    "top": 2,
+    "size": 80
+   },
+   {
+    "position": [
+     56,
+     5
+    ],
+    "text": "Boilers",
+    "bottom": -1,
+    "top": 5,
+    "size": 80
+   },
+   {
+    "position": [
+     41,
+     -11
+    ],
+    "text": "Pumping Station",
+    "bottom": -1,
+    "top": 5,
+    "size": 80
+   },
+   {
+    "position": [
+     44,
+     -36
+    ],
+    "text": "East Halls",
+    "bottom": -1,
+    "top": 2,
+    "size": 80
+   },
+   {
+    "position": [
+     66,
+     -42
+    ],
+    "text": "Forklifts",
+    "bottom": -1,
+    "top": 2,
+    "size": 80
+   },
+   {
+    "position": [
+     18,
+     4
+    ],
+    "text": "Rafters",
+    "bottom": 6,
+    "top": 10000
+   }
+  ]
+ },
+ "night-factory": {
   "key": "factory",
   "svgPath": "https://assets.tarkov.dev/maps/svg/Factory.svg",
   "svgLayer": "Ground_Floor",
@@ -2779,6 +3344,386 @@
   ]
  },
  "the-lab": {
+  "key": "the-lab",
+  "bounds": [
+   [
+    -80,
+    -477
+   ],
+   [
+    -287,
+    -193
+   ]
+  ],
+  "transform": [
+   0.575,
+   281.2,
+   0.575,
+   193.7
+  ],
+  "coordinateRotation": 270,
+  "minZoom": 2,
+  "maxZoom": 6,
+  "tilePath": "https://assets.tarkov.dev/maps/labs_v4/1st/{z}/{x}/{y}.png",
+  "tileSize": 175,
+  "heightRange": [
+   -0.9,
+   3
+  ],
+  "layers": [
+   {
+    "name": "Second Level",
+    "tilePath": "https://assets.tarkov.dev/maps/labs_v4/2nd/{z}/{x}/{y}.png",
+    "show": false,
+    "extents": [
+     {
+      "height": [
+       3,
+       10000
+      ],
+      "bounds": [
+       [
+        [
+         -101,
+         -422
+        ],
+        [
+         -271,
+         -270
+        ]
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "name": "Technical",
+    "tilePath": "https://assets.tarkov.dev/maps/labs_v4/technical/{z}/{x}/{y}.png",
+    "show": false,
+    "extents": [
+     {
+      "height": [
+       -10000,
+       -0.9
+      ]
+     }
+    ]
+   }
+  ],
+  "labels": [
+   {
+    "position": [
+     -230,
+     -400
+    ],
+    "text": "Parking",
+    "top": 2,
+    "bottom": -0.8,
+    "size": 90
+   },
+   {
+    "position": [
+     -246,
+     -379
+    ],
+    "text": "Vestibules #1",
+    "top": 2,
+    "bottom": -0.8,
+    "size": 90
+   },
+   {
+    "position": [
+     -216,
+     -379
+    ],
+    "text": "Vestibules #2",
+    "top": 2,
+    "bottom": -0.8,
+    "size": 90
+   },
+   {
+    "position": [
+     -172,
+     -342
+    ],
+    "text": "Main Working Area",
+    "top": 2,
+    "bottom": -0.8,
+    "size": 90
+   },
+   {
+    "position": [
+     -148,
+     -398
+    ],
+    "text": "Negotiation Room",
+    "top": 2,
+    "bottom": -0.8,
+    "size": 90
+   },
+   {
+    "position": [
+     -130,
+     -398
+    ],
+    "text": "Infirmary Lvl 1",
+    "top": 2,
+    "bottom": -0.8,
+    "size": 90
+   },
+   {
+    "position": [
+     -130,
+     -356
+    ],
+    "text": "Test Room",
+    "top": 2,
+    "bottom": -0.8,
+    "size": 90
+   },
+   {
+    "position": [
+     -125,
+     -308
+    ],
+    "text": "Server Room",
+    "top": 2,
+    "bottom": -0.8,
+    "size": 90
+   },
+   {
+    "position": [
+     -116,
+     -266
+    ],
+    "text": "Warehouse Tunnels",
+    "top": 2,
+    "bottom": -0.8,
+    "size": 90
+   },
+   {
+    "position": [
+     -163,
+     -269
+    ],
+    "text": "Warehouse",
+    "top": 2,
+    "bottom": -0.8,
+    "size": 90
+   },
+   {
+    "position": [
+     -170,
+     -248
+    ],
+    "text": "Warehouse Gate",
+    "top": 2,
+    "bottom": -0.8,
+    "size": 90
+   },
+   {
+    "position": [
+     -207,
+     -305
+    ],
+    "text": "Lecture Hall",
+    "top": 2,
+    "bottom": -0.8,
+    "size": 90
+   },
+   {
+    "position": [
+     -221,
+     -343
+    ],
+    "text": "Recreation Area",
+    "top": 2,
+    "bottom": -0.8,
+    "size": 90
+   },
+   {
+    "position": [
+     -236,
+     -302
+    ],
+    "text": "Gym",
+    "top": 2,
+    "bottom": -0.8,
+    "size": 90
+   },
+   {
+    "position": [
+     -241,
+     -280
+    ],
+    "text": "Men's Locker Room",
+    "top": 2,
+    "bottom": -0.8,
+    "size": 90
+   },
+   {
+    "position": [
+     -232,
+     -280
+    ],
+    "text": "Women's Locker Room",
+    "top": 2,
+    "bottom": -0.8,
+    "size": 90
+   },
+   {
+    "position": [
+     -259,
+     -366
+    ],
+    "text": "Boiler Room",
+    "top": 2,
+    "bottom": -1000,
+    "size": 90
+   },
+   {
+    "position": [
+     -260,
+     -319
+    ],
+    "text": "Security Barracks",
+    "top": 2,
+    "bottom": -0.8,
+    "size": 90
+   },
+   {
+    "position": [
+     -260,
+     -342
+    ],
+    "text": "Reception",
+    "top": 2,
+    "bottom": -0.8,
+    "size": 90
+   },
+   {
+    "position": [
+     -260,
+     -364
+    ],
+    "text": "Administrative Office",
+    "top": 1000,
+    "bottom": 3,
+    "size": 90
+   },
+   {
+    "position": [
+     -254,
+     -320
+    ],
+    "text": "Security Office",
+    "top": 1000,
+    "bottom": 3,
+    "size": 90
+   },
+   {
+    "position": [
+     -244,
+     -378
+    ],
+    "text": "Security #1",
+    "top": 1000,
+    "bottom": 3,
+    "size": 90
+   },
+   {
+    "position": [
+     -215,
+     -379
+    ],
+    "text": "Security #2",
+    "top": 1000,
+    "bottom": 3,
+    "size": 90
+   },
+   {
+    "position": [
+     -229,
+     -343
+    ],
+    "text": "Conference Room",
+    "top": 1000,
+    "bottom": 3,
+    "size": 90
+   },
+   {
+    "position": [
+     -219,
+     -302
+    ],
+    "text": "Cafeteria",
+    "top": 1000,
+    "bottom": 3,
+    "size": 90
+   },
+   {
+    "position": [
+     -189,
+     -401
+    ],
+    "text": "Offices #1",
+    "top": 1000,
+    "bottom": 3,
+    "size": 90
+   },
+   {
+    "position": [
+     -149,
+     -401
+    ],
+    "text": "Offices #2",
+    "top": 1000,
+    "bottom": 3,
+    "size": 90
+   },
+   {
+    "position": [
+     -130,
+     -401
+    ],
+    "text": "Infirmary Lvl 2",
+    "top": 1000,
+    "bottom": 3,
+    "size": 90
+   },
+   {
+    "position": [
+     -130,
+     -361
+    ],
+    "text": "Sterile Laboratory",
+    "top": 1000,
+    "bottom": 3,
+    "size": 90
+   },
+   {
+    "position": [
+     -169,
+     -288
+    ],
+    "text": "Control Room",
+    "top": 1000,
+    "bottom": 3,
+    "size": 90
+   },
+   {
+    "position": [
+     -250,
+     -281
+    ],
+    "text": "Corridor To Building #2",
+    "top": 1000,
+    "bottom": 3,
+    "size": 90
+   }
+  ]
+ },
+ "the-lab-dark": {
   "key": "the-lab",
   "bounds": [
    [

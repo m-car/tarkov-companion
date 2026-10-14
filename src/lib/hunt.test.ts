@@ -50,6 +50,49 @@ describe("map geography", () => {
   });
 });
 
+describe("other map setups", () => {
+  // Trimmed from tarkov.dev's Streets config: flat terrain, floors by height only.
+  const streets: MapConfig = {
+    bounds: [[0, 0], [1, 1]],
+    heightRange: [-6, 10],
+    layers: [
+      { name: "2nd Floor", extents: [{ height: [10, 15] }] },
+      { name: "Underground", extents: [{ height: [-10000, -6] }] },
+    ],
+    labels: [{ position: [100, 100], text: "Concordia" }],
+  };
+  // Icebreaker has no landmark labels, only named levels.
+  const icebreaker: MapConfig = {
+    bounds: [[0, 0], [1, 1]],
+    heightRange: [18.92, 19.56],
+    layers: [
+      { name: "Infirmary", extents: [{ height: [18.92, 19.56] }] },
+      { name: "Bridge", extents: [{ height: [40.7, 43.7] }] },
+    ],
+  };
+
+  it("uses height floors on flat maps", () => {
+    expect(floorName(p(100, 12, 100), streets)).toBe("2nd Floor");
+    expect(floorName(p(100, -8, 100), streets)).toBe("Underground");
+    expect(floorName(p(100, 2, 100), streets)).toBeNull();
+  });
+
+  it("names areas after levels when a map has no landmarks", () => {
+    expect(areaName(p(0, 41, 0), icebreaker)).toBe("Bridge");
+    expect(areaName(p(0, 100, 0), icebreaker)).toBe("Unmarked area");
+  });
+
+  it("doesn't repeat the level as the floor", () => {
+    const map: GameMap = {
+      id: "ice", name: "Icebreaker", normalizedName: "icebreaker", nameId: null,
+      raidDuration: null, players: null, extracts: [], transits: [], bosses: [], locks: [],
+      lootLoose: [{ position: p(0, 41, 0), items: ["ledx"] }], lootContainers: [],
+    };
+    const r = huntItem("ledx", map, icebreaker, null);
+    expect([r.loose[0].area, r.loose[0].floor]).toEqual(["Bridge", null]);
+  });
+});
+
 describe("huntItem", () => {
   const map: GameMap = {
     id: "shoreline",
