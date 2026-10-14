@@ -22,13 +22,18 @@ function loadContainerLoot(map: GameMap): Promise<ContainerLoot | null> {
   });
 }
 
+/** SPT container odds for a map (null when there are none). */
+export function useContainerLoot(map: GameMap) {
+  return useLoader(() => loadContainerLoot(map), map.id);
+}
+
 export function useHunt(
   map: GameMap,
   itemIds: string[],
   allKeys = false,
   itemsById: Map<string, Item> = new Map(),
 ) {
-  const loot = useLoader(() => loadContainerLoot(map), map.id);
+  const loot = useContainerLoot(map);
   const config = mapConfigFor(map);
   const lootData = loot.status === "ready" ? loot.data : null;
   return useMemo(() => {

@@ -6,7 +6,6 @@ import { bringList } from "../../lib/raid";
 import { pickedQuests, selectMap } from "../../lib/raidSession";
 import { useAppState } from "../../state/AppState";
 import { useGameData, useNeeds } from "../../state/useGameData";
-import { useSide } from "./MapSections";
 import { buildPins } from "./pins";
 import { useHunt } from "./useHunt";
 
@@ -15,7 +14,6 @@ export function useRaidPlan(map: GameMap, tasks: Task[]) {
   const { raid, updateRaid, ownedKeys } = useAppState();
   const { statuses } = useNeeds();
   const { itemsById } = useGameData();
-  const [side] = useSide();
 
   // Keep the session on the map being viewed (quest picks reset when it changes).
   useEffect(() => {
@@ -46,11 +44,10 @@ export function useRaidPlan(map: GameMap, tasks: Task[]) {
         hunt: hunt.results,
         keySpawns: hunt.keySpawns,
         objectives: picked.flatMap((q) => q.objectives.map((objective) => ({ quest: q.task.name, objective }))),
-        side,
         ownedKeys,
         itemsById,
       }),
-    [map, hunt.results, hunt.keySpawns, picked, side, ownedKeys, itemsById],
+    [map, hunt.results, hunt.keySpawns, picked, ownedKeys, itemsById],
   );
 
   return { available, onMap, onMapIds, pickedIds, picked, bring, hunt, pins };

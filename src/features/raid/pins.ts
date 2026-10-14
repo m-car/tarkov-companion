@@ -1,17 +1,18 @@
 import type { Item } from "../../api/items";
 import type { GameMap } from "../../api/maps";
 import type { Objective } from "../../api/tasks";
+import { categoryColor, containerCategory } from "../../lib/containers";
 import type { AllKeysResult, HuntResult } from "../../lib/hunt";
-import { extractsFor, type Side } from "../../lib/raid";
 import type { Pin } from "./RaidMap";
 
-/** Map pins for a raid: hunt spawns, their best containers, likely-room locks, objectives, extracts. */
+const pctText = (chance: number) => `${(chance * 100).toFixed(chance >= 0.01 ? 1 : 2)}%`;
+
+/** Raid-plan pins: hunt spawns and their best containers, key spawns, likely-room doors, objectives. */
 export function buildPins({
   map,
   hunt,
   keySpawns,
   objectives,
-  side,
   ownedKeys,
   itemsById,
 }: {
@@ -19,7 +20,6 @@ export function buildPins({
   hunt: HuntResult[];
   keySpawns?: AllKeysResult | null;
   objectives: { quest: string; objective: Objective }[];
-  side: Side;
   ownedKeys: ReadonlySet<string>;
   itemsById: Map<string, Item>;
 }): Pin[] {
@@ -29,12 +29,22 @@ export function buildPins({
   for (const r of hunt) {
     for (const spot of r.loose) {
       const where = [spot.area, spot.floor].filter(Boolean).join(", ");
-      pins.push({ position: spot.position, kind: "hunt", label: `${name(r.itemId)} · ${where}` });
+      pins.push({
+        position: spot.position,
+        kind: "hunt",
+        label: `${name(r.itemId)} · ${where}`,
+        details: spot.lock ? [`Likely behind ${itemsById.get(spot.lock.keyId)?.name ?? "a locked door"}`] : [],
+      });
     }
     // The top few container types, so the map doesn't drown in low-odds pins.
     for (const c of r.containers.slice(0, 3)) {
       for (const position of c.positions) {
-        pins.push({ position, kind: "container", label: `${c.typeName} (${name(r.itemId)})` });
+        pins.push({
+          position,
+          kind: "huntContainer",
+          label: `${c.typeName} (${name(r.itemId)} ${pctText(c.chance)})`,
+          fill: categoryColor(containerCategory(c.typeName)),
+        });
       }
     }
   }
@@ -49,11 +59,17 @@ export function buildPins({
         position: spot.position,
         kind: "keySpawn",
         label: `Keys: ${keys.slice(0, 3).map(name).join(", ")}${more}`,
+        details: [[spot.area, spot.floor].filter(Boolean).join(", ")],
       });
     }
     for (const c of keySpawns.containers.slice(0, 2)) {
       for (const position of c.positions) {
-        pins.push({ position, kind: "container", label: `${c.typeName} (any key)` });
+        pins.push({
+          position,
+          kind: "huntContainer",
+          label: `${c.typeName} (any key ${pctText(c.chance)})`,
+          fill: categoryColor(containerCategory(c.typeName)),
+        });
       }
     }
   }
@@ -73,16 +89,6 @@ export function buildPins({
     for (const zone of objective.zones) {
       if (zone.mapId !== map.id) continue;
       pins.push({ position: zone.position, kind: "objective", label: `${quest}: ${objective.description}` });
-    }
-  }
-
-  const { open, conditional } = extractsFor(map, side);
-  for (const e of open) {
-    if (e.position) pins.push({ position: e.position, kind: "extract", label: `Extract: ${e.name}` });
-  }
-  for (const e of conditional) {
-    if (e.position) {
-      pins.push({ position: e.position, kind: "extractConditional", label: `Extract: ${e.name} (conditional)` });
     }
   }
   return pins;

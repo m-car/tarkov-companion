@@ -113,7 +113,7 @@ export function InRaidView({
         </div>
       )}
 
-      <MapView plan={plan} />
+      <MapView map={map} plan={plan} />
 
       <RecentlyFinished tasks={tasks} />
       <h2 className="section-title">

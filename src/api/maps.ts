@@ -37,6 +37,8 @@ export interface BossSpawn {
   name: string;
   chance: number;
   locations: string[];
+  /** Where the boss can spawn, with each location's share of spawns. */
+  spots: { name: string; chance: number; positions: Position[] }[];
 }
 
 export interface LooseLoot {
@@ -88,7 +90,11 @@ export interface RawMap {
   locks?: { id: string; key: string; lockType?: string; needsPower?: boolean; position?: Position }[];
   lootLoose?: { position: Position; items?: string[] }[];
   lootContainers?: { lootContainer: string; position: Position }[];
-  bosses?: { mob: string; spawnChance: number; spawnLocations?: { name: string }[] }[];
+  bosses?: {
+    mob: string;
+    spawnChance: number;
+    spawnLocations?: { name: string; chance?: number; positions?: Position[] }[];
+  }[];
 }
 
 export interface RawMob {
@@ -142,6 +148,11 @@ export function buildMaps(
           name: t(mobs[b.mob]?.name ?? b.mob),
           chance: b.spawnChance,
           locations: [...new Set((b.spawnLocations ?? []).map((l) => t(l.name)))],
+          spots: (b.spawnLocations ?? []).map((l) => ({
+            name: t(l.name),
+            chance: l.chance ?? 0,
+            positions: l.positions ?? [],
+          })),
         }))
         .sort((a, b) => b.chance - a.chance),
       lootLoose: (m.lootLoose ?? [])

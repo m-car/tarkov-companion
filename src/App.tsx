@@ -2,17 +2,19 @@ import { useEffect, useState } from "react";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { HideoutTab } from "./features/hideout/HideoutTab";
 import { LootTab } from "./features/loot/LootTab";
+import { MapsTab } from "./features/maps/MapsTab";
 import { QuestsTab } from "./features/quests/QuestsTab";
 import { RaidTab } from "./features/raid/RaidTab";
 import { SettingsPanel } from "./features/settings/SettingsPanel";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { AppStateProvider, useAppState } from "./state/AppState";
 
-type Tab = "loot" | "raid" | "quests" | "hideout";
+type Tab = "loot" | "raid" | "maps" | "quests" | "hideout";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "loot", label: "Loot" },
   { id: "raid", label: "Raid" },
+  { id: "maps", label: "Maps" },
   { id: "quests", label: "Quests" },
   { id: "hideout", label: "Hideout" },
 ];
@@ -31,7 +33,7 @@ function Shell() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { gameMode, setGameMode } = useAppState();
 
-  // Keyboard shortcuts for alt-tab use: / focuses search, 1-4 switch tabs.
+  // Keyboard shortcuts for alt-tab use: / focuses search, 1-5 switch tabs.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const el = e.target as HTMLElement;
@@ -105,6 +107,7 @@ function Shell() {
         <ErrorBoundary key={tab}>
           {tab === "loot" && <LootTab />}
           {tab === "raid" && <RaidTab />}
+          {tab === "maps" && <MapsTab />}
           {tab === "quests" && <QuestsTab />}
           {tab === "hideout" && <HideoutTab />}
         </ErrorBoundary>

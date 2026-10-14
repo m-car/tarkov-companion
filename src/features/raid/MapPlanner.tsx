@@ -6,17 +6,20 @@ import { Collapsible } from "../../components/Collapsible";
 import { setPickedQuests, startRaid, toggleQuest } from "../../lib/raidSession";
 import { useAppState } from "../../state/AppState";
 import { HuntEditor, HuntResults } from "./HuntPanel";
+import { mapConfigFor } from "./useHunt";
 import { BossesSection, BringList, ExtractsSection, KeysSection } from "./MapSections";
+import { useGeneralMarkers } from "./useGeneralMarkers";
 import { useRaidPlan } from "./useRaidPlan";
 
 const RaidMap = lazy(() => import("./RaidMap"));
 
-export function MapView({ plan }: { plan: ReturnType<typeof useRaidPlan> }) {
-  const config = plan.hunt.config;
+export function MapView({ map, plan }: { map: GameMap; plan?: ReturnType<typeof useRaidPlan> }) {
+  const general = useGeneralMarkers(map);
+  const config = mapConfigFor(map);
   if (!config) return <p className="hint small">No interactive map for this location yet.</p>;
   return (
     <Suspense fallback={<p className="hint small">Loading map…</p>}>
-      <RaidMap config={config} pins={plan.pins} />
+      <RaidMap config={config} pins={plan?.pins ?? []} general={general} />
     </Suspense>
   );
 }
@@ -121,7 +124,7 @@ export function MapPlanner({
       />
 
       <h2 className="section-title">Map</h2>
-      <MapView plan={plan} />
+      <MapView map={map} plan={plan} />
 
       <ExtractsSection map={map} itemsById={itemsById} mapList={mapList} />
       <BossesSection map={map} />

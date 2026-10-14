@@ -51,7 +51,7 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
         />
       </div>
       <p className="hint small">
-        Shortcuts: <kbd>/</kbd> search loot · <kbd>1</kbd>–<kbd>4</kbd> switch tabs · <kbd>Esc</kbd>{" "}
+        Shortcuts: <kbd>/</kbd> search loot · <kbd>1</kbd>–<kbd>5</kbd> switch tabs · <kbd>Esc</kbd>{" "}
         clear search. Progress is saved in this browser, separately for PvP and PvE.
       </p>
       <button className="btn" onClick={onClose}>
