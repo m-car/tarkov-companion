@@ -13,7 +13,7 @@ Built for quick checks during a raid, on a phone, a second monitor, or alt-tabbe
   - an interactive map with pins for hunt spawns, containers, likely-room doors, your objectives and extracts, with floor switching
   - **Start raid** opens a compact in-raid screen; **End raid** asks which picked quests you finished
 - **Quests**:- **Quests**: mark quests done (ticking a quest also marks its required earlier quests). Quests you just ticked show under "Finished recently" with an Undo button. Filter by available, locked or done, or by Kappa. Pick a map to see only the objectives you can do there. A list shows every item your open quests still need.
-- **Hideout**: set each station's level and see what the next upgrade needs. Tap items as you collect them (or "Mark all"); collected items drop off the shopping list, the loot verdicts and hunt suggestions, and a station shows "Ready to build" when everything is in.
+- **Hideout**: set each station's level and see what the next upgrade needs. Tap items as you collect them (or "Mark all"); collected items drop off the shopping list, the loot verdicts and hunt suggestions, and a station shows "Ready to build" when everything is in. Tap ⚑ on an item (or "Flag for hunt" on a station) to have it suggested at the top of the raid item hunt, on every map.
 - **Settings** (⚙): your level, faction, and the value per slot worth keeping.
 - **Shortcuts**: `/` search loot, `1`–`4` switch tabs, `Esc` clear search.
 - Progress is saved in your browser, separately for PvP and PvE.

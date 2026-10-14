@@ -705,3 +705,18 @@ details.collapsible[open] > summary::before { content: "▾"; }
 .req.got span:not(.req-check) { color: var(--muted); text-decoration: line-through; }
 .req-check { min-width: 12px; color: var(--keep); font-weight: 700; }
 .badge.ready { background: #1f2e1c; color: var(--keep); align-self: flex-start; margin-left: 0; }
+
+/* Hideout flags for the item hunt */
+.station-actions { display: flex; gap: 2px; align-items: center; }
+.flag-btn.on { color: var(--quest); }
+.req-item { display: flex; align-items: center; gap: 2px; }
+.req-flag {
+  width: 32px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--muted);
+}
+.req-flag.on { color: var(--quest); border-color: var(--quest); background: #3a3220; }
+.hunt-chips li.suggestion.flagged { border-style: solid; border-color: var(--quest); }

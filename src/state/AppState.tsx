@@ -19,6 +19,8 @@ interface Progress {
   ownedKeys?: string[];
   /** Hideout item requirements you've already collected (see requirementKey). */
   hideoutCollected?: string[];
+  /** Items flagged on the Hideout tab to suggest in the raid item hunt. */
+  hideoutFlagged?: string[];
   recentlyCompleted?: RecentCompletion[];
   raid?: RaidSession;
 }
@@ -45,6 +47,8 @@ interface AppState {
   setHideoutLevel: (stationId: string, level: number) => void;
   hideoutCollected: ReadonlySet<string>;
   setHideoutCollected: (keys: string[], collected: boolean) => void;
+  hideoutFlagged: ReadonlySet<string>;
+  setHideoutFlagged: (itemIds: string[], flagged: boolean) => void;
 
   starred: ReadonlySet<string>;
   toggleStar: (itemId: string) => void;
@@ -119,6 +123,16 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
             else next.delete(k);
           }
           return { ...p, hideoutCollected: [...next] };
+        }),
+      hideoutFlagged: new Set(progress.hideoutFlagged ?? []),
+      setHideoutFlagged: (itemIds, flagged) =>
+        setProgress((p) => {
+          const next = new Set(p.hideoutFlagged ?? []);
+          for (const id of itemIds) {
+            if (flagged) next.add(id);
+            else next.delete(id);
+          }
+          return { ...p, hideoutFlagged: [...next] };
         }),
       starred: new Set(starredList),
       toggleStar: (itemId) =>

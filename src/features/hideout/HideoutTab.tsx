@@ -3,6 +3,7 @@ import { ItemIcon } from "../../components/ItemIcon";
 import { LoadState } from "../../components/LoadState";
 import {
   CURRENCY_CODES,
+  CURRENCY_IDS,
   maxLevel,
   missingStationRequirements,
   requirementKey,
@@ -15,7 +16,14 @@ import { NeededItems } from "../quests/NeededItems";
 export function HideoutTab() {
   const { stations, itemsById, items, retry } = useGameData();
   const { verdictContext } = useNeeds();
-  const { hideoutLevels, setHideoutLevel, hideoutCollected, setHideoutCollected } = useAppState();
+  const {
+    hideoutLevels,
+    setHideoutLevel,
+    hideoutCollected,
+    setHideoutCollected,
+    hideoutFlagged,
+    setHideoutFlagged,
+  } = useAppState();
 
   const stationList = stations.status === "ready" ? stations.data : [];
   const levelOf = (s: Station) => hideoutLevels[s.id] ?? 0;
@@ -78,6 +86,11 @@ export function HideoutTab() {
                       const keys = next.items.map((r) => requirementKey(s.id, next.level, r.itemId));
                       const have = keys.filter((k) => hideoutCollected.has(k)).length;
                       const allHave = have === keys.length && keys.length > 0;
+                      // Items still to find for this upgrade (money isn't hunted).
+                      const missing = next.items
+                        .filter((r, i) => !CURRENCY_IDS.has(r.itemId) && !hideoutCollected.has(keys[i]))
+                        .map((r) => r.itemId);
+                      const allFlagged = missing.length > 0 && missing.every((id) => hideoutFlagged.has(id));
                       return (
                         <div className="station-next">
                           <div className="station-next-head">
@@ -85,14 +98,25 @@ export function HideoutTab() {
                               Level {next.level} needs
                               {keys.length > 0 && ` · ${have}/${keys.length} collected`}
                             </span>
-                            {keys.length > 0 && (
-                              <button
-                                className="link-btn"
-                                onClick={() => setHideoutCollected(keys, !allHave)}
-                              >
-                                {allHave ? "Clear" : "Mark all"}
-                              </button>
-                            )}
+                            <span className="station-actions">
+                              {missing.length > 0 && (
+                                <button
+                                  className={`link-btn flag-btn ${allFlagged ? "on" : ""}`}
+                                  onClick={() => setHideoutFlagged(missing, !allFlagged)}
+                                  title="Suggest these in the raid item hunt"
+                                >
+                                  ⚑ {allFlagged ? "Flagged" : "Flag for hunt"}
+                                </button>
+                              )}
+                              {keys.length > 0 && (
+                                <button
+                                  className="link-btn"
+                                  onClick={() => setHideoutCollected(keys, !allHave)}
+                                >
+                                  {allHave ? "Clear" : "Mark all"}
+                                </button>
+                              )}
+                            </span>
                           </div>
                           {blockers.length > 0 && (
                             <span className="badge locked">Requires {blockers.join(", ")}</span>
@@ -108,8 +132,10 @@ export function HideoutTab() {
                               const label = CURRENCY_CODES[r.itemId]
                                 ? formatPrice(r.count, CURRENCY_CODES[r.itemId])
                                 : `${r.count}× ${item?.shortName ?? r.itemId}`;
+                              const flagged = hideoutFlagged.has(r.itemId);
+                              const huntable = !CURRENCY_IDS.has(r.itemId) && !got;
                               return (
-                                <li key={r.itemId}>
+                                <li key={r.itemId} className="req-item">
                                   <button
                                     className={`req ${got ? "got" : ""}`}
                                     onClick={() => setHideoutCollected([key], !got)}
@@ -120,6 +146,17 @@ export function HideoutTab() {
                                     <span>{label}</span>
                                     <span className="req-check">{got ? "✓" : ""}</span>
                                   </button>
+                                  {huntable && (
+                                    <button
+                                      className={`req-flag ${flagged ? "on" : ""}`}
+                                      onClick={() => setHideoutFlagged([r.itemId], !flagged)}
+                                      aria-pressed={flagged}
+                                      aria-label={`${flagged ? "Unflag" : "Flag"} ${item?.name ?? "item"} for the item hunt`}
+                                      title={flagged ? "Flagged for the item hunt" : "Flag for the item hunt"}
+                                    >
+                                      ⚑
+                                    </button>
+                                  )}
                                 </li>
                               );
                             })}

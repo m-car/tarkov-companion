@@ -22,7 +22,7 @@ export function HuntEditor({
   items: Item[];
   itemsById: Map<string, Item>;
 }) {
-  const { raid, updateRaid, starred, toggleStar } = useAppState();
+  const { raid, updateRaid, starred, toggleStar, hideoutFlagged } = useAppState();
   const { verdictContext } = useNeeds();
   const [query, setQuery] = useState("");
   const hunting = new Set(raid.huntItems);
@@ -37,19 +37,34 @@ export function HuntEditor({
 
   const results = query.trim().length >= 2 ? searchItems(items, query.trim(), 6) : [];
 
-  // Needed items and watchlist items that spawn loose on this map.
+  const looseCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const l of map.lootLoose) for (const id of l.items) counts.set(id, (counts.get(id) ?? 0) + 1);
+    return counts;
+  }, [map]);
+
+  // Flagged on the Hideout tab and still needed: always suggested, spawns or not.
+  const flagged = useMemo(
+    () =>
+      [...hideoutFlagged].filter(
+        (id) => verdictContext.hideoutNeeds.has(id) && !hunting.has(id) && itemsById.has(id),
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [hideoutFlagged, verdictContext, raid.huntItems, itemsById],
+  );
+
+  // Other needed items and watchlist items that spawn loose on this map.
   const suggestions = useMemo(() => {
-    const loose = new Set(map.lootLoose.flatMap((l) => l.items));
     const needed = new Set([
       ...verdictContext.questNeeds.keys(),
       ...verdictContext.hideoutNeeds.keys(),
       ...starred,
     ]);
     return [...needed]
-      .filter((id) => loose.has(id) && !hunting.has(id) && itemsById.has(id))
+      .filter((id) => looseCounts.has(id) && !hunting.has(id) && !flagged.includes(id) && itemsById.has(id))
       .slice(0, 12);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map, verdictContext, starred, raid.huntItems, itemsById]);
+  }, [looseCounts, verdictContext, starred, raid.huntItems, itemsById, flagged]);
 
   return (
     <div className="hunt-editor">
@@ -106,6 +121,35 @@ export function HuntEditor({
           </ul>
         )}
       </div>
+      {flagged.length > 0 && (
+        <div className="suggestions">
+          <span className="muted small">
+            ⚑ Flagged for hideout upgrades
+            <button
+              className="link-btn"
+              onClick={() => flagged.forEach(add)}
+            >
+              Add all
+            </button>
+          </span>
+          <ul className="hunt-chips">
+            {flagged.map((id) => {
+              const item = itemsById.get(id);
+              const spots = looseCounts.get(id) ?? 0;
+              return (
+                <li key={id} className="suggestion flagged">
+                  <button onClick={() => add(id)} aria-label={`Hunt ${item?.name}`}>
+                    <ItemIcon item={item} size={24} />+ {item?.shortName}
+                    <span className="muted small">
+                      {spots ? `${spots} spot${spots === 1 ? "" : "s"}` : "no loose spawns"}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
       {suggestions.length > 0 && (
         <div className="suggestions">
           <span className="muted small">Needed or watched, and spawns on {map.name}:</span>
